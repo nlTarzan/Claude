@@ -1,0 +1,10 @@
+{
+    "pack": {
+        "description": {
+            "translate": "Structures Datapack"
+        },
+        "pack_format": 107,
+        "min_format": 107,
+        "max_format": 107
+    }
+}

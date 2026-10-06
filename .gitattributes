@@ -1,0 +1,14 @@
+# Text files are stored with LF line endings and checked out as usual for the system.
+* text=auto
+
+# Shell scripts must keep LF (they break with CRLF); Windows scripts keep CRLF.
+gradlew text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never touch these.
+*.nbt binary
+*.png binary
+*.jar binary
+*.pdf binary
