@@ -1,0 +1,2 @@
+cd "C:\Users\Duncan Postel\Documents\Github\Claude"
+- claude --resume e4f8c9d4-ce0a-4bd3-8e44-7d95d7a92438 (Minecraft Resetting Structures, Ocean Monument done)
