@@ -1,0 +1,47 @@
+database:
+  # sqlite (a file in the plugin folder, no setup needed) or mysql (also for MariaDB)
+  type: sqlite
+  sqlite-file: races.db
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft
+    username: root
+    password: ''
+    use-ssl: false
+    pool-size: 4
+
+leaderboards:
+  # Time zone used for the day / week / month leaderboards, e.g. Europe/Amsterdam.
+  # "system" uses the time zone of the machine the server runs on.
+  time-zone: system
+  # Day the weekly leaderboard resets (MONDAY ... SUNDAY).
+  week-start: MONDAY
+
+# How results look in the PlaceholderAPI placeholders (%nltraces_<race>_...%).
+placeholders:
+  # Shown when there's no result for a position (yet).
+  empty: '---'
+  # The full placeholder; the _name and _value versions give just one part.
+  entry: '{name} - {value}'
+  # Points races. Times look like 1:23.456.
+  points: '{points} pts'
+  dq: 'DQ'
+  dnf: 'DNF'
+
+# While you use /nltraces setup or set, the blocks you click are shown as these marker blocks.
+# Only you see them; the world itself isn't changed. Use any block name, e.g. GLASS or GOLD_BLOCK.
+setup-markers:
+  start-checkpoint: VERDANT_FROGLIGHT
+  middle-checkpoint: OCHRE_FROGLIGHT
+  finish-checkpoint: PEARLESCENT_FROGLIGHT
+  grid-spot: EMERALD_BLOCK
+  point-zone: OCHRE_FROGLIGHT
+  # Seconds the markers stay visible after you finish a setup.
+  linger-seconds: 5
+
+# Points races. The active zone is shown to racers as an end gateway beam, with a particle ring at its radius.
+# A point scores when a racer comes within the zone's radius of its center (a sphere).
+points-races:
+  # Particle for the ring: any particle without extra data, e.g. END_ROD, FLAME, HAPPY_VILLAGER.
+  ring-particle: END_ROD

@@ -1,0 +1,264 @@
+# All plugin messages, in MiniMessage format: https://docs.advntr.dev/minimessage/format.html
+# Colours: <red>, <green>, <yellow>, <gray>, <gold>, <#ff8800> ... Styles: <bold>, <italic>. Also <gradient:gold:yellow>.
+# Tags like <race> or <time> are filled in by the plugin. To show a literal < write \<.
+# Run /nltraces reload after editing.
+
+# Don't change this. When a plugin update rewords messages, it raises this number; your old file is then
+# saved as messages-backup.yml and replaced, so copy any custom texts back from there.
+messages-version: 8
+
+prefix: '<gold>[nlT-Races]</gold> '
+
+general:
+  no-permission: '<red>You don''t have permission to do that.</red>'
+  players-only: '<red>Only players can use that command.</red>'
+  unknown-command: '<red>Unknown command. Use <yellow>/<label> help</yellow>.</red>'
+  usage: '<red>Usage: <yellow>/<label> <usage></yellow></red>'
+  unknown-race: '<red>There is no race called <yellow><race></yellow>. See <yellow>/<label> list</yellow>.</red>'
+  invalid-option: '<red>Unknown <what> <yellow><value></yellow>. Choose from: <yellow><options></yellow></red>'
+  invalid-number: '<red><yellow><value></yellow> is not a valid number.</red>'
+  not-used: '<gray>Note: <race> is a <format> race, so this isn''t used unless you change its format or travel mode.</gray>'
+  reloaded: '<green>Reloaded config, messages and <count> race(s). Database settings need a server restart.</green>'
+  click-to-run: '<gray>Click to run</gray> <white><command></white>'
+  race-active: '<red><race> is being raced right now. Wait until it''s finished before changing it.</red>'
+  reload-while-racing: '<red>A race is running. Wait until all races have finished before reloading.</red>'
+
+# Messages players see while racing.
+play:
+  course-in-use: '<red>This course is being used, please wait or try a different course.</red>'
+  not-ready: '<red>The race <yellow><race></yellow> isn''t fully set up yet.</red>'
+  already-racing: '<red>You''re already in a race. Use a lobby button to leave it first.</red>'
+  solo-uses-start: '<gray><race> is a solo race. Use its start button.</gray>'
+  solo-ready: '<green>Go through the start line to begin <yellow><race></yellow>!</green>'
+  go-title: '<green><bold>GO!</bold></green>'
+  checkpoint: '<gray>Checkpoint <number>/<total> <dark_gray>–</dark_gray> <yellow><time></yellow></gray>'
+  missed-checkpoint: '<red>You missed checkpoint <number>! Go back and pass it first.</red>'
+  actionbar-waiting: '<gray>Cross the start line to start the timer</gray>'
+  actionbar-timer: '<yellow><time></yellow><checkpoints>'
+  actionbar-checkpoints: '   <gray>Checkpoint <passed>/<total></gray>'
+  finished-title: '<green><bold>Finished!</bold></green>'
+  finished-subtitle: '<yellow><time></yellow>'
+  finished: '<green>You finished <yellow><race></yellow> in <yellow><time></yellow>!</green>'
+  dnf-max-time: '<red>You ran out of time on <yellow><race></yellow> (limit <max>). Recorded as DNF.</red>'
+  left-race: '<gray>You left <yellow><race></yellow>. Recorded as DNF.</gray>'
+  lobby-teleported: '<gray>Teleported to the lobby of <yellow><race></yellow>.</gray>'
+  stopped: '<red>Your race was stopped because the server is reloading or shutting down.</red>'
+  cancelled: '<red>The race <yellow><race></yellow> was cancelled by an admin.</red>'
+  cancelled-by-leader: '<red>The leader cancelled <yellow><race></yellow>.</red>'
+  save-failed: '<red>Your run couldn''t be saved. Please tell an admin.</red>'
+  spectator: '<red>You can''t race in spectator mode.</red>'
+
+  # Group races. <leader>/<player> are player names, <place> is e.g. "2nd".
+  not-in-race: '<red>You''re not in a race.</red>'
+  gate-lever: '<gray>This lever opens the race''s gates. It''s switched automatically.</gray>'
+  prep-announce: '<yellow><leader></yellow> <gray>is starting a</gray> <yellow><race></yellow> <gray>race (<travel>). Press its join button to take part! (<max> places)</gray>'
+  prep-leader: '<green>You''re leading <yellow><race></yellow>. When everyone has joined, press the start button. At least <min> players are needed.</green> <gray>(Press prep again or use /races cancel to cancel it.)</gray>'
+  no-race-prepared: '<red>Nobody is preparing <yellow><race></yellow> right now. Press its prep button to start one.</red>'
+  already-joined: '<red>You''ve already joined <yellow><race></yellow>.</red>'
+  race-full: '<red><yellow><race></yellow> is full (<max> players).</red>'
+  joined-self: '<green>You joined <yellow><race></yellow>. Wait on your grid spot for the start.</green>'
+  joined: '<gray><yellow><player></yellow> joined <yellow><race></yellow> (<count>/<max>).</gray>'
+  only-leader: '<red>Only <yellow><leader></yellow> can start this race.</red>'
+  not-enough-players: '<red>At least <min> players are needed to start (there are <count>).</red>'
+  countdown-title: '<yellow><bold><seconds></bold></yellow>'
+  player-left: '<gray><yellow><player></yellow> left <yellow><race></yellow>.</gray>'
+  left-before-start: '<gray>You left <yellow><race></yellow> before it started.</gray>'
+  leader-left: '<red><yellow><race></yellow> was cancelled because the leader left.</red>'
+  prep-timeout: '<red><yellow><race></yellow> was cancelled because it wasn''t started in time.</red>'
+  finished-place: '<green>You finished <yellow><race></yellow> in <yellow><place></yellow> place with <yellow><time></yellow>!</green>'
+  finished-place-subtitle: '<yellow><place> place</yellow> <gray>·</gray> <yellow><time></yellow>'
+  first-finished: '<yellow><player></yellow> <gray>finished first! You have</gray> <yellow><seconds>s</yellow> <gray>left to finish.</gray>'
+  dnf-time-up: '<red>Time''s up on <yellow><race></yellow>. Recorded as DNF.</red>'
+  podium-title: '<gold><bold><place> place!</bold></gold>'
+  results-header: '<newline><gold><bold>Results: <race></bold></gold>'
+  results-finished: '  <yellow><place>.</yellow> <white><player></white> <gray>–</gray> <green><time></green>'
+  results-other: '  <dark_gray>-</dark_gray> <white><player></white> <gray>–</gray> <red><status></red>'
+
+  # Points races. <points> is a score, <target> the points needed to win.
+  points-start: '<gray>Reach the beam first to score. First to <yellow><target></yellow> points, or the most points after <yellow><time></yellow>, wins!</gray>'
+  points-scored-title: '<green><bold>+1 point</bold></green>'
+  points-scored-subtitle: '<yellow><points> points</yellow>'
+  points-scored: '<yellow><player></yellow> <gray>scored! (<points> points) A new zone appeared.</gray>'
+  points-won: '<yellow><player></yellow> <gray>reached</gray> <yellow><points></yellow> <gray>points!</gray>'
+  points-time-up: '<yellow>Time''s up!</yellow>'
+  points-final: '<green>You finished <yellow><race></yellow> in <yellow><place></yellow> place with <yellow><points></yellow> points.</green>'
+  actionbar-points: '<yellow><points> pts</yellow> <dark_gray>|</dark_gray> <gray>zone <white><distance>m</white></gray> <dark_gray>|</dark_gray> <gray><white><time></white> left</gray>'
+  results-points: '  <yellow><place>.</yellow> <white><player></white> <gray>–</gray> <green><points> pts</green>'
+  zone-needs-gliding: '<red>That point didn''t count: you have to be flying when you reach the zone.</red>'
+  zone-needs-vehicle: '<red>That point didn''t count: you have to be riding your <vehicle> when you reach the zone.</red>'
+  actionbar-takeoff-window: '<yellow><bold>Take off!</bold> <seconds>s</yellow>'
+
+  # Elytra and vehicle races. <vehicle> is the vehicle type, e.g. "horse".
+  no-elytra: '<red>Put on an elytra to race <yellow><race></yellow>. Bring your own rockets too.</red>'
+  empty-hand: '<red>Empty your main hand to start <yellow><race></yellow>: you''ll be given a <item> to steer with.</red>'
+  vehicle-failed: '<red>The vehicle for <yellow><race></yellow> couldn''t be spawned. Please tell an admin.</red>'
+  not-your-vehicle: '<red>You can only ride your own vehicle during a race.</red>'
+  vehicle-taken: '<red>That vehicle belongs to a racer.</red>'
+  checkpoint-needs-gliding: '<red>That checkpoint didn''t count: you have to be flying when you pass it.</red>'
+  checkpoint-needs-vehicle: '<red>That checkpoint didn''t count: you have to be riding your <vehicle> when you pass it.</red>'
+  actionbar-remount: '<red><bold>Get back on your <vehicle>!</bold> <seconds>s</red>'
+  actionbar-takeoff: '<red><bold>Take off again!</bold> <seconds>s</red>'
+
+  # Disqualification. <reason> is one of the dq lines below.
+  dq-title: '<red><bold>Disqualified!</bold></red>'
+  dq-subtitle: '<gray><reason></gray>'
+  dq-chat: '<red>You were disqualified from <yellow><race></yellow>: <reason>.</red>'
+  dq:
+    teleport: 'teleporting isn''t allowed during a race'
+    ender-pearl: 'ender pearls aren''t allowed during a race'
+    chorus-fruit: 'chorus fruit isn''t allowed during a race'
+    flying: 'flying isn''t allowed during a race'
+    gamemode: 'your game mode changed'
+    death: 'you died'
+    logout: 'you logged out'
+    world-change: 'you left the race''s world'
+    foot-mount: 'you can''t ride anything in a foot race'
+    foot-glide: 'you can''t use an elytra in a foot race'
+    dismount: 'you got off your <vehicle>'
+    remount-timeout: 'you didn''t get back on your <vehicle> in time'
+    vehicle-lost: 'your <vehicle> was lost'
+    landed: 'you landed'
+    takeoff-timeout: 'you didn''t take off again in time'
+    no-takeoff: 'you didn''t take off in time'
+
+help:
+  header: '<gray>nlT-Races <yellow><version></yellow> – commands:</gray>'
+  line: '  <yellow>/<label> <usage></yellow> <gray>– <description></gray>'
+
+race:
+  invalid-name: '<red>Race names may only use lowercase letters, numbers and - (max 32 characters).</red>'
+  exists: '<red>A race called <yellow><race></yellow> already exists.</red>'
+  vehicle-required: '<red>Vehicle races need a vehicle type. Choose from: <yellow><options></yellow></red>'
+  created: '<green>Created <format> race <yellow><race></yellow> (<travel>).</green>'
+  delete-confirm: '<red>This permanently deletes race <yellow><race></yellow>: its locations, buttons <bold>and all its recorded times</bold>.</red><newline><confirm> <gray>(or type <yellow>/<label> delete <race> confirm</yellow>)</gray>'
+  delete-button: '<red><bold>[Delete <race> permanently]</bold></red>'
+  deleted: '<green>Deleted race <yellow><race></yellow> and its <runs> recorded run(s).</green>'
+  deleted-times-failed: '<red>Race <yellow><race></yellow> was deleted, but its times couldn''t be removed from the database. Check the server log.</red>'
+
+list:
+  empty: '<gray>There are no races yet. Create one with <yellow>/<label> create</yellow>.</gray>'
+  header: '<gray>Races (<count>):</gray>'
+  line: '  <yellow><race></yellow> <gray>– <format>, <travel></gray> <status>'
+  ready: '<green>✔ ready</green>'
+  not-ready: '<red>✘ not ready</red>'
+
+info:
+  header: '<gold><bold><race></bold></gold> <gray>– <format>, <travel>, <rules> rules</gray>'
+  line: '  <gray><name>:</gray> <white><value></white>'
+  not-set: '<red>not set</red>'
+  ready: '<green>This race is ready to use.</green>'
+  missing-header: '<red>Still needed before this race can be used</red> <gray>(<yellow>/<label> setup <race></yellow> walks you through it)</gray><red>:</red>'
+  missing-line: '  <red>-</red> <gray><item></gray>'
+  missing:
+    lobby: 'a lobby (<yellow>/<label> set \<race> lobby</yellow>)'
+    vehicle: 'a vehicle type (<yellow>/<label> edit \<race> vehicle \<type></yellow>)'
+    solo-start: 'a start location (<yellow>/<label> set \<race> start</yellow>)'
+    solo-start-inside: 'the start location is inside the start checkpoint. Move it just behind the start line (<yellow>/<label> set \<race> start</yellow>)'
+    grid: 'a starting grid (<yellow>/<label> set \<race> grid addslot</yellow>)'
+    podium-1: 'podium place 1 (<yellow>/<label> set \<race> podium 1</yellow>)'
+    podium-2: 'podium place 2 (<yellow>/<label> set \<race> podium 2</yellow>)'
+    podium-3: 'podium place 3 (<yellow>/<label> set \<race> podium 3</yellow>)'
+    point-zones: 'at least 2 point zones (<yellow>/<label> set \<race> pointzone add</yellow>)'
+    start-checkpoint: 'a start checkpoint (<yellow>/<label> set \<race> checkpoint start</yellow>)'
+    finish-checkpoint: 'a finish checkpoint (<yellow>/<label> set \<race> checkpoint finish</yellow>)'
+    button-prep: 'a prep button (<yellow>/<label> link \<race> prep</yellow>)'
+    button-start: 'a start button (<yellow>/<label> link \<race> start</yellow>)'
+    button-join: 'a join button (<yellow>/<label> link \<race> join</yellow>)'
+
+set:
+  updated: '<green>Set <yellow><key></yellow> of <yellow><race></yellow> to <yellow><value></yellow>.</green>'
+  unknown-key: '<red>Unknown setting <yellow><key></yellow>. Choose from: <yellow><options></yellow></red>'
+  out-of-range: '<red><key> must be between <min> and <max>.</red>'
+  vehicle-needs-travel: '<red><race> isn''t a vehicle race. Use <yellow>/<label> edit <race> travel vehicle</yellow> first.</red>'
+
+# Right-click setup: /nltraces setup (guided) and /nltraces set (one item).
+setup:
+  # The guide is shown as one block per step. <newline> starts a new line; a leading <newline> leaves a blank line.
+  started: '<newline><gold><bold>Setting up <race></bold></gold> <gray>(<format>, <travel>)</gray><newline><gray>Right-click blocks to set each item. Every click is saved straight away.</gray>'
+  step: '<newline><gold><bold>Step <number> of <total></bold></gold> <dark_gray>│</dark_gray> <yellow><step></yellow><newline><instruction><note><current><newline><buttons>'
+  # Used by /nltraces set: one item, no step counter or buttons.
+  single: '<newline><gold><bold>Set <step></bold></gold><newline><instruction><current>'
+  instruction:
+    button: '<white>Right-click the block to use as the <step>.</white>'
+    location: '<white>Right-click the block where the <step> should be.</white><newline><gray>Or, holding any item, right-click the air to use the block you''re standing on. It will face the way you''re looking.</gray>'
+    position: '<white>Right-click the block where the <step> should be.</white><newline><gray>Or, holding any item, right-click the air to use the block you''re standing on.</gray>'
+    corner-1: '<white>Right-click the <yellow>first corner</yellow> of the <step>.</white><newline><gray>Or, holding any item, right-click the air to use the block you''re standing on.</gray>'
+    corner-2: '<white>Right-click the <yellow>opposite corner</yellow> of the <step>.</white><newline><gray>Or, holding any item, right-click the air to use the block you''re standing on.</gray>'
+  repeating-note: '<newline><gray>Add as many as you need, then click Next.</gray>'
+  existing-note: '<newline><gray>The current ones are shown as marker blocks. Click Next to keep them, or right-click to start a new set (the old ones are then removed).</gray>'
+  set-replaced: '<gray>Removed the <count> old <step>(s). Keep clicking to add new ones.</gray>'
+  undone-last: '<yellow>↶ Removed <step> <number>.</yellow>'
+  currently: '<newline><gray>Currently: <white><value></white></gray>'
+  so-far: '<newline><gray>So far: <white><value></white></gray>'
+  # Clickable buttons under each step; hovering shows the command they run.
+  button:
+    back: '<yellow>[◀ Back]</yellow>'
+    undo: '<yellow>[↶ Undo]</yellow>'
+    next: '<green>[Next ▶]</green>'
+    finish: '<red>[Finish ■]</red>'
+  step-done: '<green>✔ <step>: <white><value></white></green>'
+  corner-set: '<green>✔ first corner: <white><location></white></green>'
+  button-needs-block: '<red>A button has to be a real block: look at it and right-click it.</red>'
+  corner-other-world: '<red>Both corners must be in the same world. Right-click the opposite corner again.</red>'
+  flat-region: '<gray>Both corners were at the same height, so the checkpoint covers the clicked blocks and the <height> blocks above them.</gray>'
+  went-back: '<gray>« Back to the <step>. Your next click replaces it.</gray>'
+  went-back-repeating: '<gray>« Back to the <step>. New clicks add more.</gray>'
+  moved-on: '<gray>» Moving on from the <step></gray>'
+  at-first-step: '<red>This is already the first step.</red>'
+  nothing-missing: '<green>Everything <yellow><race></yellow> needs is set. Use <yellow>/<label> setup <race> start</yellow> to go through every step again.</green>'
+  finished: '<newline><green><bold>✔ Setup of <race> finished.</bold></green> <gray>Everything you set is saved.</gray>'
+  cancelled: '<gray>Your setup was stopped because the plugin reloaded. Run the setup command again to continue.</gray>'
+  not-in-setup: '<red>You''re not setting up <yellow><race></yellow>. Start with <yellow>/<label> setup <race></yellow>.</red>'
+  invalid-podium: '<red>The podium place must be 1, 2 or 3.</red>'
+  actionbar: '<gray>Setting up <yellow><race></yellow> › <white><step></white></gray>'
+  # What each step is called in the messages above.
+  names:
+    button-prep: 'prep button'
+    button-join: 'join button'
+    button-start: 'start button'
+    button-lobby: 'lobby button'
+    solo-start: 'start location'
+    start-checkpoint: 'start checkpoint'
+    middle-checkpoint: 'middle checkpoint'
+    finish-checkpoint: 'finish checkpoint'
+    grid-region: 'starting grid area'
+    grid-slot: 'starting grid spot'
+    point-zone: 'point zone'
+    podium-1: '1st place podium'
+    podium-2: '2nd place podium'
+    podium-3: '3rd place podium'
+    lobby: 'lobby'
+
+cleartimes:
+  confirm: '<red>This permanently deletes <bold>all recorded times</bold> of <yellow><race></yellow> (the race itself is kept).</red><newline><confirm> <gray>(or type <yellow>/<label> cleartimes <race> confirm</yellow>)</gray>'
+  button: '<red><bold>[Clear all times of <race>]</bold></red>'
+  done: '<green>Deleted <runs> recorded run(s) of <yellow><race></yellow>. Its leaderboards are now empty.</green>'
+  failed: '<red>The times of <yellow><race></yellow> couldn''t be deleted. Check the server log.</red>'
+
+cancel:
+  setup: '<gray>Stopped setting up <yellow><race></yellow>. Everything you already set is saved.</gray>'
+  nothing: '<red>You aren''t selecting anything. To end a running race, use <yellow>/<label> cancel \<race></yellow>.</red>'
+  not-running: '<red><yellow><race></yellow> isn''t being raced right now.</red>'
+  race: '<green>Cancelled <yellow><race></yellow>. <count> player(s) were sent to the lobby. Nothing was recorded.</green>'
+
+grid:
+  max-set: '<green>Max players for <yellow><race></yellow> set to <yellow><max></yellow>.</green>'
+  cleared: '<green>Removed the grid of <yellow><race></yellow>.</green>'
+
+checkpoint:
+  removed: '<green>Removed checkpoint #<number> from <yellow><race></yellow>. Later checkpoints moved up one number.</green>'
+  cleared: '<green>Removed all middle checkpoints from <yellow><race></yellow>.</green>'
+  invalid-number: '<red>There is no checkpoint #<number>; <race> has <count>.</red>'
+
+pointzone:
+  removed: '<green>Removed point zone #<number> from <yellow><race></yellow>.</green>'
+  cleared: '<green>Removed all point zones from <yellow><race></yellow>.</green>'
+  invalid-number: '<red>There is no point zone #<number>; <race> has <count>.</red>'
+
+link:
+  linked: '<green>Linked this <yellow><block></yellow> to the <yellow><action></yellow> action of <yellow><race></yellow>.</green>'
+  unlinked: '<green>Unlinked this block from the <yellow><action></yellow> action of <yellow><race></yellow>.</green>'
+  already-linked: '<red>This block is already linked to <yellow><action></yellow> of <yellow><race></yellow>. Use <yellow>/<label> unlink</yellow> first.</red>'
+  not-linked: '<red>This block isn''t linked to any race.</red>'
+  gate-needs-lever: '<red>A gate link has to be a lever. Wire a lever to your gate''s redstone and link that.</red>'
+  no-block: '<red>Look at the block you want to use (within <reach> blocks).</red>'

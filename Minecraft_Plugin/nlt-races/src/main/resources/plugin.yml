@@ -1,0 +1,25 @@
+name: nlT-Races
+version: '${version}'
+main: com.nltarzan.races.NltRacesPlugin
+api-version: '26.2'
+description: Solo, group and points races with leaderboards.
+author: nlTarzan
+softdepend: [PlaceholderAPI]
+libraries:
+  - com.zaxxer:HikariCP:6.3.0
+
+commands:
+  nltraces:
+    description: nlT-Races commands. "lobby" needs nltraces.user, everything else nltraces.admin.
+    usage: /nltraces help
+    aliases: [races, nltr]
+
+permissions:
+  nltraces.user:
+    description: Use race buttons (start, prep, join, lobby) and /nltraces lobby.
+    default: op
+  nltraces.admin:
+    description: All nlT-Races commands.
+    default: op
+    children:
+      nltraces.user: true
