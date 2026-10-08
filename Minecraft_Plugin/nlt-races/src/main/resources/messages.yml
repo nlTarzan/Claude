@@ -52,7 +52,7 @@ play:
   not-in-race: '<red>You''re not in a race.</red>'
   gate-lever: '<gray>This lever opens the race''s gates. It''s switched automatically.</gray>'
   prep-announce: '<yellow><leader></yellow> <gray>is starting a</gray> <yellow><race></yellow> <gray>race (<travel>). Press its join button to take part! (<max> places)</gray>'
-  prep-leader: '<green>You''re leading <yellow><race></yellow>. When everyone has joined, press the start button. At least <min> players are needed.</green> <gray>(Press prep again or use /races cancel to cancel it.)</gray>'
+  prep-leader: '<green>You''re leading <yellow><race></yellow>. When everyone has joined, press the start button. At least <min> players are needed.</green> <gray>(Press prep again or use /<label> cancel to cancel it.)</gray>'
   no-race-prepared: '<red>Nobody is preparing <yellow><race></yellow> right now. Press its prep button to start one.</red>'
   already-joined: '<red>You''ve already joined <yellow><race></yellow>.</red>'
   race-full: '<red><yellow><race></yellow> is full (<max> players).</red>'

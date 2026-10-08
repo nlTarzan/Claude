@@ -4,5 +4,5 @@ build/
 *.iml
 out/
 .kotlin/
-# Local test server
+# Local test servers
 run/

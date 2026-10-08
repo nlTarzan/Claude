@@ -336,8 +336,9 @@ public final class RaceService {
         for (Player other : player.getWorld().getPlayers()) {
             other.sendMessage(msg().get("prefix").append(announcement));
         }
+        // Started from a button, not a command, so there's no typed label: name the main command.
         msg().send(player, "play.prep-leader", "race", race.getName(),
-                "min", String.valueOf(race.getSetting(RaceSetting.MIN_PLAYERS)));
+                "min", String.valueOf(race.getSetting(RaceSetting.MIN_PLAYERS)), "label", "nltraces");
     }
 
     private void join(Player player, Race race) {

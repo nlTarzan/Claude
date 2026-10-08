@@ -1,0 +1,97 @@
+# ======================= nlT-Structures: Monuments ========================
+# Settings for Ocean Monuments ("monuments" for short).
+# Every interval the monument's area is loaded and checked for Elder Guardians.
+# When none are left, a new monument is placed: a random pre-built one, or a generated maze.
+# Ported from the "Structures" datapack.
+# ==========================================================================
+
+location:
+  # Center of the monument. This replaces the datapack's marker entity:
+  #   /summon marker 224.0 40.0 -320.0 {Tags:["ResettingStructure","OceanMonument"]}
+  # It is the corner where the 4 center blocks meet, on the Y level the structures are placed from.
+  # Stand on that corner and run /nltstructures monument setcenter, or use setcenter <x> <y> <z>.
+  # On a new server nothing is checked or built until /nltstructures monument active on is run,
+  # so check this location first.
+  world: world
+  x: 224
+  y: 40
+  z: -320
+  # Elder Guardians and players within this many blocks of the center count as "at the monument"
+  # (datapack: 40), and so does anything inside the monument itself, even its far corners.
+  # The chunks covering both are loaded during a check.
+  check-radius: 40
+
+reset:
+  # What a reset places:
+  #   pre-built  one of the variants below
+  #   generated  a new random maze of rooms (see maze:)
+  # Try a generated monument first with /nltstructures monument reset generated.
+  mode: pre-built
+  # Time between checks. After every check one entry is picked at random, by weight.
+  # Units: t = ticks, s = seconds, d = Minecraft days (24000 ticks). 1 real day = 72d.
+  # For testing use e.g. 10s / 15s / 20s / 25s like the datapack did, or run /nltstructures monument check.
+  intervals:
+    - { delay: 1d, weight: 30 }
+    - { delay: 2d, weight: 30 }
+    - { delay: 3d, weight: 30 }
+    - { delay: 72d, weight: 10 }
+  # When the monument is cleared but a player is within check-radius, it doesn't reset.
+  # Instead the next check is picked from these intervals, which should be shorter than the ones above.
+  occupied-intervals:
+    - { delay: 300s, weight: 1 }
+    - { delay: 600s, weight: 1 }
+    - { delay: 900s, weight: 1 }
+  # Remove the Guardians left in the area before a new monument is placed,
+  # so they don't pile up over many resets.
+  clear-guardians: true
+  # Send the reset messages (the datapack's /say) to players with the nltstructures.admin permission.
+  # Toggle in-game with /nltstructures monument broadcast [on|off].
+  announce: true
+
+# Pre-built monuments, with their chance weight.
+# Each name needs <name>_ne, _nw, _se and _sw .nbt files in structures/monument/pre-gen.
+# monument_00 is the empty monument. It could never be rolled in the datapack, so its weight is 0.
+variants:
+  monument_00: 0
+  monument_01: 10
+  monument_02: 10
+  monument_03: 10
+  monument_04: 10
+  monument_05: 10
+  monument_06: 10
+  monument_07: 10
+  monument_08: 10
+  monument_09: 10
+  monument_10: 10
+
+# Elder Guardian stats. Pre-built monuments get one extra in the top room (the quadrant structures
+# contain the other two); generated monuments get all three, in the penthouse and both wings.
+elder-guardian:
+  # Pre-built only: height above location.y. The pre-built quadrants are placed 1 block below
+  # location.y; at 11.5 the Elder Guardian is in the same spot of the top room as in the datapack.
+  y-offset: 11.5
+  health: 100
+  attack-damage: 10
+
+reward:
+  # Give the player who kills the last Elder Guardian a Monument Hoe for mining the sponges.
+  enabled: true
+
+# Generated monuments (reset.mode: generated). Preview layouts with /nltstructures monument layout [seed] [newest-chance],
+# or show the one that's built right now with /nltstructures monument layout current. Both print in the server console.
+maze:
+  # The rooms are laid out with a Growing Tree maze. At every step it continues from the newest
+  # room with this chance, otherwise from a random room already in the maze:
+  #   1.0  always the newest: long winding corridors with few dead ends (depth-first)
+  #   0.0  always random: lots of short branches and dead ends (like Prim's)
+  # Every monument draws its own chance from a bell curve: most land close to the peak, about
+  # 2 in 3 within peak +/- spread, and never outside min..max.
+  newest-chance:
+    peak: 0.65
+    spread: 0.15
+    min: 0.0
+    max: 1.0
+  # Every monument gets at least this many sponge rooms (only open at the floor, like vanilla).
+  # When a layout has too few, a dead end as far from the entrance as possible is turned into one;
+  # only when there's no suitable dead end, another unit is used and the maze is reconnected around it.
+  min-sponge-rooms: 1

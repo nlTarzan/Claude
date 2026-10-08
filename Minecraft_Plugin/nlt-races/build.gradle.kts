@@ -1,9 +1,14 @@
 plugins {
     java
+    id("xyz.jpenilla.run-paper") version "3.1.0"
 }
 
 group = "com.nltarzan"
 version = "0.1.0"
+
+// The Minecraft version we compile against. The plugin.yml api-version is derived from it,
+// so the plugin loads on this version and every newer one.
+val minecraftVersion = "26.2"
 
 repositories {
     mavenCentral()
@@ -17,17 +22,34 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.3")
     // Downloaded by the server at runtime through `libraries:` in plugin.yml
     compileOnly("com.zaxxer:HikariCP:6.3.0")
+    // The tests read YAML and parse MiniMessage, so they need the Paper API too (never packed in the plugin).
+    testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
+
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 // Paper 26.x runs on (and its API is compiled for) Java 25.
-tasks.withType<JavaCompile> {
+tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(25)
+    options.release = 25
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.processResources {
+    val props = mapOf("version" to project.version, "apiVersion" to minecraftVersion)
+    inputs.properties(props)
     filesMatching("plugin.yml") {
-        expand("version" to project.version)
+        expand(props)
     }
 }
 
@@ -35,10 +57,10 @@ tasks.jar {
     archiveFileName.set("nlT-Races-${project.version}.jar")
 }
 
-// .\gradlew.bat deploy — builds the jar and copies it into the local test server (run/plugins).
-tasks.register<Copy>("deploy") {
-    group = "nlt-races"
-    description = "Builds the plugin and copies it into run/plugins."
-    from(tasks.jar)
-    into(layout.projectDirectory.dir("run/plugins"))
+// ./gradlew runServer -> builds the plugin and starts the local test server in run/ with it.
+// LuckPerms and PlaceholderAPI are already in run/plugins; the plugin jar itself is added by
+// run-paper, so don't copy it into run/plugins as well.
+tasks.runServer {
+    minecraftVersion(minecraftVersion)
+    runDirectory = layout.projectDirectory.dir("run")
 }

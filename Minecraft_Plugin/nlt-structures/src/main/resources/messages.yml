@@ -1,0 +1,66 @@
+# All plugin messages, in MiniMessage format: https://docs.advntr.dev/minimessage/format.html
+# Colours: <red>, <green>, <yellow>, <gray>, <gold>, <#ff8800> ... Styles: <bold>, <italic>. Also <gradient:gold:yellow>.
+# Tags like <command> or <seed> are filled in by the plugin. To show a literal < write \<.
+# Run /nltstructures reload after editing.
+
+# Don't change this. When a plugin update rewords messages, it raises this number; your old file is then
+# saved as messages-backup.yml and replaced, so copy any custom texts back from there.
+messages-version: 1
+
+prefix: '<gold>[nlT-Structures]</gold> '
+
+general:
+  unknown-command: '<red>Unknown command. Use <yellow><command> help</yellow>.</red>'
+  usage: '<red>Usage: <yellow><usage></yellow></red>'
+  reloaded: '<green>Reloaded messages.yml. Every structure has its own reload for its settings, e.g. <yellow><command> monument reload</yellow>.</green>'
+
+help:
+  header: '<gray>nlT-Structures <yellow><version></yellow> – commands:</gray>'
+  line: '  <yellow><usage></yellow> <gray>– <description></gray>'
+  footer: '<gray>Every command is explained in full in plugins/nlT-Structures/commands.txt.</gray>'
+
+# /nltstructures monument ... <command> is "/nltstructures monument".
+monument:
+  status-header: '<dark_aqua><bold><name></bold></dark_aqua>'
+  # <value> keeps the colour the plugin gives it (e.g. red for a problem).
+  status-line: '<gray> <label>: </gray><value>'
+  reloaded: '<green>Reloaded monuments.yml and the structures.</green>'
+  reload-failed: '<red>monuments.yml <problem>. Still using the previous settings. Details are in the console.</red>'
+  reload-failed-paused: '<red>monuments.yml <problem>. The monument stays paused. Details are in the console.</red>'
+  not-saved: '<red>Not saved: monuments.yml <problem>. Fix it and run <yellow><command> reload</yellow> first.</red>'
+  not-turned-on: '<red>Not turned on: monuments.yml <problem>. Fix it and run <yellow><command> reload</yellow> first.</red>'
+  already-active: '<yellow>The monument is already active.</yellow>'
+  already-inactive: '<yellow>The monument is already inactive.</yellow>'
+  now-active: '<green>The monument is now active at <location>. Use <yellow><command> status</yellow> to see when the first check is.</green>'
+  now-inactive: '<yellow>The monument is now inactive: nothing is checked or built until <command> active on.</yellow>'
+  broadcasts-on: '<green>Monument broadcasts are now on.</green>'
+  broadcasts-off: '<yellow>Monument broadcasts are now off.</yellow>'
+  checking: '<gray>Checking the monument...</gray>'
+  resetting: '<gray>Resetting the monument...</gray>'
+  not-cleared: '<yellow>Not cleared: <alive> Elder Guardian(s) alive. Use <command> reset to force it.</yellow>'
+  players-inside: '<yellow>Cleared, but <players> player(s) are inside. Postponed; use <command> reset to force it.</yellow>'
+  placed: '<green>Placed <placed>.</green>'
+  failed: '<red>Failed: <reason></red>'
+  seed-only-generated: '<red>A seed only works with <command> reset generated \<seed>. Nothing was reset.</red>'
+  not-placed-yet: '<yellow>The plugin hasn''t placed a monument yet.</yellow>'
+  pre-built-no-layout: '<yellow>The current monument is pre-built variant <variant>, it has no generated layout.</yellow>'
+  layout-printed: '<green>Layout <seed> (<newest>% newest) printed in the server console.</green>'
+  current-layout-printed: '<green>Current layout <seed> (<newest>% newest) printed in the server console.</green>'
+  console-needs-coordinates: '<red>From the console, give coordinates: <yellow><command> setcenter \<x> \<y> \<z></yellow></red>'
+  whole-numbers: '<red>Coordinates must be whole numbers: <yellow><command> setcenter \<x> \<y> \<z></yellow></red>'
+  world-not-loaded: '<red>World ''<world>'' is not loaded.</red>'
+  center-set: '<green>Monument center set to <x> <y> <z> in <world>.</green>'
+  check-y-level: '<gold>Double check your y-level. An Ocean Monument is usually set at y=<usual-y>.</gold>'
+
+  # Sent to everyone with nltstructures.admin while broadcasts are on (/nltstructures monument broadcast).
+  broadcast:
+    not-cleared: '<red>The Monument has not been cleared.</red>'
+    cleared-occupied: '<yellow>The Monument has been cleared, it will reset once everyone has left.</yellow>'
+    cleared: '<green>The Monument has been cleared.</green>'
+    reset: '<green>The Ocean Monument has been reset.</green>'
+
+  # Shown above the hotbar, or in chat when the hoe is taken away.
+  hoe:
+    only-sponges: '<red>The Monument Hoe only mines sponges.</red>'
+    sponges-need-hoe: '<red>Sponges can only be mined with the Monument Hoe.</red>'
+    crumbled: '<red>The Monument Hoe crumbles away, it only works inside the Ocean Monument.</red>'

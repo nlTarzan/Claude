@@ -1,7 +1,7 @@
 name: nlT-Races
 version: '${version}'
 main: com.nltarzan.races.NltRacesPlugin
-api-version: '26.2'
+api-version: '${apiVersion}'
 description: Solo, group and points races with leaderboards.
 author: nlTarzan
 softdepend: [PlaceholderAPI]
