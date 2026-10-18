@@ -1,6 +1,7 @@
 package com.nltarzan.races;
 
 import com.nltarzan.races.command.NltRacesCommand;
+import com.nltarzan.races.config.ConfigUpdater;
 import com.nltarzan.races.config.Messages;
 import com.nltarzan.races.leaderboard.LeaderboardService;
 import com.nltarzan.races.leaderboard.PlaceholderHook;
@@ -31,7 +32,8 @@ public final class NltRacesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        ConfigUpdater.update(this);
+        reloadConfig();
         messages = new Messages(this);
 
         try {
@@ -91,6 +93,7 @@ public final class NltRacesPlugin extends JavaPlugin {
 
     /** Re-reads config.yml, messages.yml and the race files. Database settings need a restart. */
     public void reload() {
+        ConfigUpdater.update(this);
         reloadConfig();
         messages.reload();
         races.load();

@@ -17,6 +17,15 @@ class TimesTest {
     }
 
     @Test
+    void compactTimesDropTheThousandthsFromAMinute() {
+        assertEquals("23.456", Times.formatCompact(23_456));
+        assertEquals("59.999", Times.formatCompact(59_999));
+        assertEquals("1:00.00", Times.formatCompact(60_000));
+        assertEquals("1:23.45", Times.formatCompact(83_459));
+        assertEquals("12:03.00", Times.formatCompact(723_007));
+    }
+
+    @Test
     void formatsWholeSeconds() {
         assertEquals("0:00", Times.formatSeconds(0));
         assertEquals("0:45", Times.formatSeconds(45));

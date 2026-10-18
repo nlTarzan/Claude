@@ -109,9 +109,11 @@ A DQ always means a message (editable in `messages.yml`), the vehicle removed, a
 | `%nltraces_<race>_player_last%` | The viewing player's most recent run |
 | `%nltraces_<race>_player_day%`, `_player_week%`, `_player_month%` | The viewing player's best that day / week / month |
 | `%nltraces_<race>_player_pb%` | The viewing player's all-time best |
+| `%nltraces_<race>_cycle_<1-5>%`, `_player_cycle%` | Rotates through day, week and month, each for `placeholders.cycle.seconds` (default 20). Clock-based, so all holograms switch together |
+| `%nltraces_cycle_title%` | One for all races (no race in it): the title of the period showing now (`placeholders.cycle.titles`: Daily / Weekly / Monthly Leaderboard) |
 
 - **Name/value split:** each placeholder also has `_name` and `_value` versions.
-- **Value format:** values show as `1:23.456`, `7 pts`, `DQ` or `DNF`. Empty positions show a configurable placeholder (default `---`).
+- **Value format:** values show as `23.456` (or `1:23.45` from a minute on, thousandths cut off; chat messages keep all three decimals), `7 pts`, `DQ` or `DNF`. Empty positions show a configurable placeholder (default `---`).
 - **Caching:** placeholders are served from memory and refreshed after each race and when a period rolls over.
 
 ## Commands and permissions
@@ -210,12 +212,23 @@ A DQ always means a message (editable in `messages.yml`), the vehicle removed, a
    - **`cleartimes`:** deletes every recorded race, run and split of a race (with a clickable confirm) and refreshes its leaderboards. It's refused while the race is active.
    - **Tab completion:** `edit <race> <number setting>` suggests the current value. Every subcommand completes race names, options and `confirm` where they apply.
 
-## Messages file updates
+## Config and messages file updates (updated 2026-10-10)
 
-`messages.yml` has a `messages-version`. When an update rewords existing messages, that number goes up. On startup, an older server copy is then saved as `messages-backup.yml` and replaced, and a warning is logged.
+Updating the plugin only takes a new jar; the yml files update themselves on startup and on `/nltraces reload`.
+
+- **config.yml:** if settings were added or removed in an update, the file is rewritten in the new layout with its comments. The admin's value is kept for every setting that still exists; new ones get their default, and settings no longer used are dropped. The console lists what was added and removed. An up-to-date file is left alone.
+- **messages.yml:** has a `messages-version`. When an update rewords existing messages, that number goes up, and an older server copy is replaced by the new file, with a warning. (Not merged: an old default text can't be told apart from a text the admin rewrote, so merging would keep old wording forever.)
+- **Backups:** the old file is first moved to `plugins/nlT-Races/backups/`, named after the file and the time, e.g. `config-2026-10-10_14-30-05.yml`, so no backup is overwritten. A `messages-backup.yml` left by earlier versions is moved there too.
+- **Race files** need no updating: new settings are optional and old formats are still read.
 
 ## Gate levers (decided 2026-10-08)
 
 - **Linking:** any race can have levers linked with `/nltraces link <race> gate`. This is optional, manual-only, and not part of setup or the ready check; the link must be a lever.
 - **When they flip:** gate levers switch **on** when the countdown starts (solo: when Start is pressed), giving pistons time to retract before GO. They switch **off** when the race ends or is cancelled.
 - **Players:** they can't flip a gate lever by hand.
+
+## Display names, checkpoint numbering and particles (2026-10-09)
+
+- **Display name:** `edit <race> name <text>` (spaces allowed, max 48, `reset` to clear) or `display-name:` in the race file. Every message that names a race shows the display name. Commands, files, the database and placeholders keep using the ID. In messages.yml, `<race>` is the display name and `<race-id>` the ID; command hints use `<race-id>`, so `info` now shows the real command (e.g. `/nltr set skyzones lobby`). `list` and `info` show both.
+- **Checkpoint numbering:** the start, middle and finish checkpoints are counted together, so with 25 middle checkpoints the counter runs `0/27` → `27/27`. In group races the start checkpoint now gives the same sound and chat line (`Checkpoint 1/27 – time since GO`) as the others. Solo keeps its GO! title at the start.
+- **Checkpoint particles:** `edit <race> checkpoint-particles on|off|auto` or `checkpoint-particles: true/false` in the race file (left out = auto). Auto means on when the race has middle checkpoints and off with only a start and finish. When on, a particle burst shows twice a second at the center of each racer's next checkpoint (start, then the middle ones in order, then finish), only to that racer (from joining, so on the grid and during the countdown too, until they finish or leave). Players not racing never see them. The points-race ring is likewise only shown to that race's racers. The particle and amount are set under `checkpoint-particles:` in config.yml (default HAPPY_VILLAGER, 6). Points races have no checkpoints, so it doesn't apply there.

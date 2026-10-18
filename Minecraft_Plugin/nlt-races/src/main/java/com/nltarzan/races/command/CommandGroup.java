@@ -55,7 +55,7 @@ abstract class CommandGroup {
     protected Race editableRace(CommandSender sender, String label, String[] args, String usage) {
         Race race = race(sender, label, args, usage);
         if (race != null && plugin.getRaceService().isActive(race)) {
-            msg().send(sender, "general.race-active", "race", race.getName());
+            msg().send(sender, "general.race-active", "race", race);
             return null;
         }
         return race;
@@ -82,7 +82,7 @@ abstract class CommandGroup {
     /** Reminds the admin when they set something this race's format doesn't use. */
     protected void noteIfUnused(CommandSender sender, Race race, boolean used) {
         if (!used) {
-            msg().send(sender, "general.not-used", "race", race.getName(),
+            msg().send(sender, "general.not-used", "race", race,
                     "format", Enums.display(race.getFormat()));
         }
     }

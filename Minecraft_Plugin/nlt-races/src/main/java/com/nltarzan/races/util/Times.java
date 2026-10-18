@@ -15,6 +15,15 @@ public final class Times {
                 : String.format("%d.%03d", seconds, millis);
     }
 
+    /**
+     * For leaderboard placeholders, where width matters: 23.456 under a minute, 1:23.45 from a minute on
+     * (the thousandths are cut off, not rounded).
+     */
+    public static String formatCompact(long ms) {
+        return ms < 60_000 ? format(ms)
+                : String.format("%d:%02d.%02d", ms / 60_000, (ms / 1000) % 60, (ms % 1000) / 10);
+    }
+
     /** Formats whole seconds as 5:00 or 0:45. */
     public static String formatSeconds(long seconds) {
         return String.format("%d:%02d", seconds / 60, seconds % 60);

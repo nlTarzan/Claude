@@ -130,7 +130,11 @@ public final class RaceRegistry {
                 "nlT-Races race file. After editing, run /nltraces reload.",
                 "format: SOLO, GROUP or POINTS | travel: FOOT, ELYTRA, VEHICLE or FREE | rules: STRICT or LENIENT",
                 "boat-type (boat races): OAK, SPRUCE, BIRCH, JUNGLE, ACACIA, DARK_OAK, MANGROVE, CHERRY, PALE_OAK, BAMBOO",
+                "display-name: shown to players instead of the ID (spaces allowed); leave it out to show the ID",
+                "checkpoint-particles: true or false; leave it out for automatic (on when there are middle checkpoints)",
                 "Regions are world,minX,minY,minZ,maxX,maxY,maxZ. Buttons are world,x,y,z. Settings are in seconds."));
+        yml.set("display-name", race.getCustomName());
+        yml.set("checkpoint-particles", race.getCheckpointParticlesSetting());
         yml.set("format", race.getFormat().name());
         yml.set("travel", race.getTravel().name());
         yml.set("vehicle", race.getVehicle() == null ? null : race.getVehicle().name());
@@ -182,6 +186,8 @@ public final class RaceRegistry {
         RaceFormat format = require(Enums.parse(RaceFormat.class, yml.getString("format")), "format");
         TravelMode travel = require(Enums.parse(TravelMode.class, yml.getString("travel")), "travel");
         Race race = new Race(name, format, travel);
+        race.setCustomName(yml.getString("display-name"));
+        race.setCheckpointParticles(yml.isBoolean("checkpoint-particles") ? yml.getBoolean("checkpoint-particles") : null);
         if (travel == TravelMode.VEHICLE) {
             race.setVehicle(Enums.parse(VehicleType.class, yml.getString("vehicle")));
             BoatWood wood = Enums.parse(BoatWood.class, yml.getString("boat-type"));

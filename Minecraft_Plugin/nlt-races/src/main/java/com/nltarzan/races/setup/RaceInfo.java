@@ -27,7 +27,7 @@ public final class RaceInfo {
 
     public static void show(NltRacesPlugin plugin, Audience to, Race race, String label) {
         Messages msg = plugin.getMessages();
-        msg.send(to, "info.header", "race", race.getName(), "format", Enums.display(race.getFormat()),
+        msg.send(to, "info.header", "race", race, "format", Enums.display(race.getFormat()),
                 "travel", travelText(race), "rules", Enums.display(race.getRules()));
         line(msg, to, "Lobby", race.getLobby());
 
@@ -61,6 +61,9 @@ public final class RaceInfo {
                 line(msg, to, "Checkpoint " + (i + 1), middle.get(i).describe());
             }
             line(msg, to, "Finish checkpoint", describe(race.getFinishCheckpoint()));
+            Boolean particles = race.getCheckpointParticlesSetting();
+            line(msg, to, "Checkpoint particles", (race.showsCheckpointParticles() ? "on" : "off")
+                    + (particles == null ? " (auto)" : ""));
         }
 
         Map<ButtonAction, List<String>> buttons = race.getButtons().entrySet().stream()
@@ -90,9 +93,10 @@ public final class RaceInfo {
             msg.send(to, "info.ready");
             return;
         }
-        msg.send(to, "info.missing-header", "race", race.getName(), "label", label);
+        msg.send(to, "info.missing-header", "race", race, "label", label);
         for (String key : missing) {
-            msg.sendRaw(to, "info.missing-line", "item", msg.get("info.missing." + key, "label", label));
+            msg.sendRaw(to, "info.missing-line", "item",
+                    msg.get("info.missing." + key, "label", label, "race", race));
         }
     }
 

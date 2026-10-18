@@ -69,12 +69,12 @@ public final class SetupService {
             }
             session.index = firstMissing(session, 0);
             if (session.current() == null) {
-                msg().send(player, "setup.nothing-missing", "race", race.getName(), "label", label);
+                msg().send(player, "setup.nothing-missing", "race", race, "label", label);
                 return;
             }
         }
         replaceSession(player, session);
-        msg().sendRaw(player, "setup.started", "race", race.getName(),
+        msg().sendRaw(player, "setup.started", "race", race,
                 "format", Enums.display(race.getFormat()), "travel", RaceInfo.travelText(race));
         prompt(player, session);
     }
@@ -113,7 +113,7 @@ public final class SetupService {
                 ButtonAction action = Enums.parse(ButtonAction.class, step.id().substring("button-".length()));
                 ButtonLink existing = plugin.getRaces().findButton(BlockPos.of(block));
                 if (existing != null && (existing.race() != session.race || existing.action() != action)) {
-                    msg().send(player, "link.already-linked", "race", existing.race().getName(),
+                    msg().send(player, "link.already-linked", "race", existing.race(),
                             "action", Enums.display(existing.action()), "label", session.label);
                     return;
                 }
@@ -282,7 +282,7 @@ public final class SetupService {
         }
         markers.clearAll(player, session, false);
         msg().actionBar(player, Component.empty());
-        msg().send(player, "cancel.setup", "race", session.race.getName());
+        msg().send(player, "cancel.setup", "race", session.race);
         return true;
     }
 
@@ -299,7 +299,7 @@ public final class SetupService {
         markers.clearAll(player, session, true);
         msg().actionBar(player, Component.empty());
         if (session.guided) {
-            msg().sendRaw(player, "setup.finished", "race", session.race.getName());
+            msg().sendRaw(player, "setup.finished", "race", session.race);
             RaceInfo.showStatus(plugin, player, session.race, session.label);
         }
     }
@@ -410,7 +410,7 @@ public final class SetupService {
             Player player = plugin.getServer().getPlayer(entry.getKey());
             SetupStep step = entry.getValue().current();
             if (player != null && step != null) {
-                msg().actionBar(player, msg().get("setup.actionbar", "race", entry.getValue().race.getName(),
+                msg().actionBar(player, msg().get("setup.actionbar", "race", entry.getValue().race,
                         "step", name(step)));
                 markers.refresh(player, entry.getValue());
             }
@@ -453,7 +453,7 @@ public final class SetupService {
     private SetupSession sessionFor(Player player, Race race, String label) {
         SetupSession session = sessions.get(player.getUniqueId());
         if (session == null || session.race != race) {
-            msg().send(player, "setup.not-in-setup", "race", race.getName(), "label", label);
+            msg().send(player, "setup.not-in-setup", "race", race, "label", label);
             return null;
         }
         return session;
@@ -461,7 +461,7 @@ public final class SetupService {
 
     private boolean editable(Player player, SetupSession session) {
         if (plugin.getRaceService().isActive(session.race)) {
-            msg().send(player, "general.race-active", "race", session.race.getName());
+            msg().send(player, "general.race-active", "race", session.race);
             return false;
         }
         return true;

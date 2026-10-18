@@ -16,10 +16,12 @@ import java.util.Locale;
  * <ul>
  *   <li>{@code last_<1-10>}: the last group/points race</li>
  *   <li>{@code day_<1-5>}, {@code week_<1-5>}, {@code month_<1-5>}: best per player in the period</li>
- *   <li>{@code player_last}, {@code player_day}, {@code player_week}, {@code player_month}, {@code player_pb}:
+ *   <li>{@code cycle_<1-5>}: rotates through day, week and month (see {@link #cyclePeriod()})</li>
+ *   <li>{@code player_last}, {@code player_day}, {@code player_week}, {@code player_month}, {@code player_cycle}, {@code player_pb}:
  *       the viewing player's own results</li>
  * </ul>
  * Each can end in {@code _name} or {@code _value} to get just that part.
+ * Plus {@code %nltraces_cycle_title%} (no race): the title of the period the cycle placeholders show now.
  */
 public final class NltRacesExpansion extends PlaceholderExpansion {
 
@@ -53,6 +55,11 @@ public final class NltRacesExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         String[] parts = params.toLowerCase(Locale.ROOT).split("_");
+        if (parts.length == 2 && parts[0].equals("cycle") && parts[1].equals("title")) {
+            // One title for every race: all cycle placeholders switch at the same moment.
+            Period period = cyclePeriod();
+            return config().getString("placeholders.cycle.titles." + period.key(), period.key());
+        }
         if (parts.length < 3) {
             return null;
         }
@@ -74,7 +81,7 @@ public final class NltRacesExpansion extends PlaceholderExpansion {
             } else if (parts[2].equals("pb")) {
                 entry = own.personalBest();
             } else {
-                Period period = Period.byKey(parts[2]);
+                Period period = parts[2].equals("cycle") ? cyclePeriod() : Period.byKey(parts[2]);
                 if (period == null) {
                     return null;
                 }
@@ -86,6 +93,8 @@ public final class NltRacesExpansion extends PlaceholderExpansion {
         List<Entry> list;
         if (parts[1].equals("last")) {
             list = board.lastRace();
+        } else if (parts[1].equals("cycle")) {
+            list = board.top().get(cyclePeriod());
         } else {
             Period period = Period.byKey(parts[1]);
             if (period == null) {
@@ -100,6 +109,16 @@ public final class NltRacesExpansion extends PlaceholderExpansion {
             return null;
         }
         return format(position >= 1 && position <= list.size() ? list.get(position - 1) : null, part);
+    }
+
+    /**
+     * The period the cycle placeholders show right now: day, week, month, then day again, each for
+     * {@code placeholders.cycle.seconds}. Based on the clock, so every hologram switches at the same moment.
+     */
+    private Period cyclePeriod() {
+        long millis = Math.max(1, config().getLong("placeholders.cycle.seconds", 20)) * 1000;
+        Period[] periods = Period.values();
+        return periods[(int) ((System.currentTimeMillis() / millis) % periods.length)];
     }
 
     /**
@@ -127,7 +146,7 @@ public final class NltRacesExpansion extends PlaceholderExpansion {
             case FINISHED -> entry.points() != null
                     ? config().getString("placeholders.points", "{points} pts")
                     .replace("{points}", String.valueOf(entry.points()))
-                    : entry.timeMs() == null ? empty() : Times.format(entry.timeMs());
+                    : entry.timeMs() == null ? empty() : Times.formatCompact(entry.timeMs());
         };
     }
 

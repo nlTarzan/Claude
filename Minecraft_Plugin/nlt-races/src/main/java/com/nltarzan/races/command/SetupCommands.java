@@ -134,13 +134,13 @@ final class SetupCommands extends CommandGroup {
                 }
                 race.setGridMax(max);
                 races().save(race);
-                msg().send(player, "grid.max-set", "race", race.getName(), "max", String.valueOf(max));
+                msg().send(player, "grid.max-set", "race", race, "max", String.valueOf(max));
             }
             case "clear" -> {
                 race.setGridRegion(null);
                 race.getGridSlots().clear();
                 races().save(race);
-                msg().send(player, "grid.cleared", "race", race.getName());
+                msg().send(player, "grid.cleared", "race", race);
             }
             default -> msg().send(player, "general.usage", "label", label,
                     "usage", "set <race> grid <region|addslot|max|clear>");
@@ -160,14 +160,14 @@ final class SetupCommands extends CommandGroup {
                 if (index != null) {
                     race.getCheckpoints().remove((int) index);
                     races().save(race);
-                    msg().send(player, "checkpoint.removed", "race", race.getName(),
+                    msg().send(player, "checkpoint.removed", "race", race,
                             "number", String.valueOf(index + 1));
                 }
             }
             case "clear" -> {
                 race.getCheckpoints().clear();
                 races().save(race);
-                msg().send(player, "checkpoint.cleared", "race", race.getName());
+                msg().send(player, "checkpoint.cleared", "race", race);
             }
             default -> msg().send(player, "general.usage", "label", label, "usage", usage);
         }
@@ -199,14 +199,14 @@ final class SetupCommands extends CommandGroup {
                 if (index != null) {
                     race.getPointZones().remove((int) index);
                     races().save(race);
-                    msg().send(player, "pointzone.removed", "race", race.getName(),
+                    msg().send(player, "pointzone.removed", "race", race,
                             "number", String.valueOf(index + 1));
                 }
             }
             case "clear" -> {
                 race.getPointZones().clear();
                 races().save(race);
-                msg().send(player, "pointzone.cleared", "race", race.getName());
+                msg().send(player, "pointzone.cleared", "race", race);
             }
             default -> msg().send(player, "general.usage", "label", label,
                     "usage", "set <race> pointzone <add [radius]|remove|clear>");
@@ -224,7 +224,7 @@ final class SetupCommands extends CommandGroup {
             return null;
         }
         if (number < 1 || number > size) {
-            msg().send(sender, invalidKey, "number", String.valueOf(number), "race", race.getName(),
+            msg().send(sender, invalidKey, "number", String.valueOf(number), "race", race,
                     "count", String.valueOf(size));
             return null;
         }
@@ -266,14 +266,14 @@ final class SetupCommands extends CommandGroup {
         BlockPos pos = BlockPos.of(block);
         ButtonLink existing = races().findButton(pos);
         if (existing != null) {
-            msg().send(sender, "link.already-linked", "race", existing.race().getName(),
+            msg().send(sender, "link.already-linked", "race", existing.race(),
                     "action", Enums.display(existing.action()), "label", label);
             return;
         }
         race.getButtons().put(pos, action);
         races().save(race);
         msg().send(sender, "link.linked", "block", block.getType().name().toLowerCase(Locale.ROOT),
-                "action", Enums.display(action), "race", race.getName());
+                "action", Enums.display(action), "race", race);
         noteIfUnused(sender, race, action.appliesTo(race.getFormat()));
     }
 
@@ -288,13 +288,13 @@ final class SetupCommands extends CommandGroup {
             return;
         }
         if (plugin.getRaceService().isActive(existing.race())) {
-            msg().send(sender, "general.race-active", "race", existing.race().getName());
+            msg().send(sender, "general.race-active", "race", existing.race());
             return;
         }
         existing.race().getButtons().remove(BlockPos.of(block));
         races().save(existing.race());
         msg().send(sender, "link.unlinked", "action", Enums.display(existing.action()),
-                "race", existing.race().getName());
+                "race", existing.race());
     }
 
     private Block targetBlock(CommandSender sender) {

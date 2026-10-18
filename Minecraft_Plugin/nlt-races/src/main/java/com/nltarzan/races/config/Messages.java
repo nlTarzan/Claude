@@ -1,5 +1,6 @@
 package com.nltarzan.races.config;
 
+import com.nltarzan.races.race.Race;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -41,6 +42,7 @@ public final class Messages {
     public void reload() {
         File file = new File(plugin.getDataFolder(), FILE_NAME);
         YamlConfiguration defaults = loadDefaults();
+        Backups.moveLegacy(plugin, "messages-backup.yml"); // where versions before the backups folder kept it
         if (!file.exists()) {
             plugin.saveResource(FILE_NAME, false);
         } else if (defaults != null && isOutdated(file, defaults)) {
@@ -67,26 +69,24 @@ public final class Messages {
         return YamlConfiguration.loadConfiguration(file).getInt(VERSION_KEY, 0) < defaults.getInt(VERSION_KEY, 0);
     }
 
-    /** Keeps the admin's old file as messages-backup.yml and writes the new one. */
+    /** Moves the admin's old file to the backups folder and writes the new one. */
     private void replaceOutdated(File file) {
-        File backup = new File(plugin.getDataFolder(), "messages-backup.yml");
-        if (backup.exists() && !backup.delete()) {
-            plugin.getLogger().warning("Could not replace " + backup.getName() + "; keeping the old messages.yml.");
-            return;
-        }
-        if (!file.renameTo(backup)) {
+        String backup = Backups.move(plugin, file);
+        if (backup == null) {
             plugin.getLogger().warning("Could not back up messages.yml; keeping the old one.");
             return;
         }
         plugin.saveResource(FILE_NAME, false);
         plugin.getLogger().warning("messages.yml was out of date and has been replaced. Your previous copy is "
-                + "saved as messages-backup.yml; copy any custom texts back from there.");
+                + "saved as " + backup + "; copy any custom texts back from there.");
     }
 
     /**
      * Returns a message without the prefix. {@code placeholders} are pairs of name and value, used as
      * {@code <name>} in messages.yml: {@code get("help.line", "label", "nltraces", "usage", "help")}.
      * String values are inserted as plain text; Component values (e.g. another message) keep their styling.
+     * A Race value fills two placeholders: {@code <name>} with its display name and {@code <name-id>} with
+     * its ID (for commands), e.g. {@code "race", race} gives {@code <race>} and {@code <race-id>}.
      */
     public Component get(String key, Object... placeholders) {
         String text = messages.getString(key);
@@ -97,9 +97,15 @@ public final class Messages {
         for (int i = 0; i + 1 < placeholders.length; i += 2) {
             String name = String.valueOf(placeholders[i]);
             Object value = placeholders[i + 1];
-            resolvers.resolver(value instanceof Component component
-                    ? Placeholder.component(name, component)
-                    : Placeholder.unparsed(name, String.valueOf(value)));
+            if (value instanceof Race race) {
+                // <race> is the display name players see; <race-id> is the name typed in commands.
+                resolvers.resolver(Placeholder.unparsed(name, race.displayName()));
+                resolvers.resolver(Placeholder.unparsed(name + "-id", race.getName()));
+            } else if (value instanceof Component component) {
+                resolvers.resolver(Placeholder.component(name, component));
+            } else {
+                resolvers.resolver(Placeholder.unparsed(name, String.valueOf(value)));
+            }
         }
         return MINI_MESSAGE.deserialize(text, resolvers.build());
     }

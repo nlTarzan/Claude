@@ -156,7 +156,7 @@ public final class RaceService {
             if (action == ButtonAction.START) {
                 startSolo(player, race);
             } else {
-                msg().send(player, "play.solo-uses-start", "race", race.getName());
+                msg().send(player, "play.solo-uses-start", "race", race);
             }
             return;
         }
@@ -176,11 +176,11 @@ public final class RaceService {
             return false;
         }
         if (race.getTravel() == TravelMode.ELYTRA && !wearsElytra(player)) {
-            msg().send(player, "play.no-elytra", "race", race.getName());
+            msg().send(player, "play.no-elytra", "race", race);
             return false;
         }
         if (needsHand && needsSteeringItem(race) && !player.getInventory().getItemInMainHand().getType().isAir()) {
-            msg().send(player, "play.empty-hand", "race", race.getName(), "item", steeringItemName(race));
+            msg().send(player, "play.empty-hand", "race", race, "item", steeringItemName(race));
             return false;
         }
         return true;
@@ -219,7 +219,7 @@ public final class RaceService {
             return;
         }
         if (!race.isReady()) {
-            msg().send(player, "play.not-ready", "race", race.getName());
+            msg().send(player, "play.not-ready", "race", race);
             return;
         }
         if (!canTakePart(player, race, true)) {
@@ -240,12 +240,12 @@ public final class RaceService {
             giveSteeringItem(player, race);
             if (!mountVehicle(racer, race, race.getSoloStart())) {
                 removeRacer(active, racer);
-                msg().send(player, "play.vehicle-failed", "race", race.getName());
+                msg().send(player, "play.vehicle-failed", "race", race);
                 return;
             }
         }
         setGates(race, true);
-        msg().send(player, "play.solo-ready", "race", race.getName());
+        msg().send(player, "play.solo-ready", "race", race);
     }
 
     /**
@@ -319,7 +319,7 @@ public final class RaceService {
         }
         List<Location> spots = GridSpots.of(race);
         if (!race.isReady() || spots.isEmpty()) {
-            msg().send(player, "play.not-ready", "race", race.getName());
+            msg().send(player, "play.not-ready", "race", race);
             return;
         }
         if (!canTakePart(player, race, false)) {
@@ -331,20 +331,20 @@ public final class RaceService {
         active.add(player); // not on the course until they press Start
 
         Component announcement = msg().get("play.prep-announce", "leader", player.getName(),
-                "race", race.getName(), "travel", RaceInfo.travelText(race),
+                "race", race, "travel", RaceInfo.travelText(race),
                 "max", String.valueOf(active.maxPlayers()));
         for (Player other : player.getWorld().getPlayers()) {
             other.sendMessage(msg().get("prefix").append(announcement));
         }
         // Started from a button, not a command, so there's no typed label: name the main command.
-        msg().send(player, "play.prep-leader", "race", race.getName(),
+        msg().send(player, "play.prep-leader", "race", race,
                 "min", String.valueOf(race.getSetting(RaceSetting.MIN_PLAYERS)), "label", "nltraces");
     }
 
     private void join(Player player, Race race) {
         ActiveRace active = activeRaces.get(race.getName());
         if (active == null) {
-            msg().send(player, "play.no-race-prepared", "race", race.getName());
+            msg().send(player, "play.no-race-prepared", "race", race);
             return;
         }
         if (active.state() != State.PREPARING) {
@@ -354,7 +354,7 @@ public final class RaceService {
         ActiveRace current = racesByPlayer.get(player.getUniqueId());
         if (current != null) {
             msg().send(player, current == active ? "play.already-joined" : "play.already-racing",
-                    "race", race.getName());
+                    "race", race);
             return;
         }
         if (!canTakePart(player, race, true)) {
@@ -362,7 +362,7 @@ public final class RaceService {
         }
         Location spot = active.nextJoinSpot();
         if (spot == null) {
-            msg().send(player, "play.race-full", "race", race.getName(), "max", String.valueOf(active.maxPlayers()));
+            msg().send(player, "play.race-full", "race", race, "max", String.valueOf(active.maxPlayers()));
             return;
         }
         player.setFlying(false);
@@ -373,13 +373,13 @@ public final class RaceService {
         racer.setOnCourse(true);
         giveSteeringItem(player, race);
         if (!mountOnGrid(racer, race)) {
-            msg().send(player, "play.vehicle-failed", "race", race.getName());
+            msg().send(player, "play.vehicle-failed", "race", race);
             withdraw(active, racer, null, true, true);
             return;
         }
 
-        msg().send(player, "play.joined-self", "race", race.getName());
-        notifyRacers(active, player, "play.joined", "player", player.getName(), "race", race.getName(),
+        msg().send(player, "play.joined-self", "race", race);
+        notifyRacers(active, player, "play.joined", "player", player.getName(), "race", race,
                 "count", String.valueOf(active.racers().size()), "max", String.valueOf(active.maxPlayers()));
     }
 
@@ -387,7 +387,7 @@ public final class RaceService {
     private void startGroup(Player player, Race race) {
         ActiveRace active = activeRaces.get(race.getName());
         if (active == null) {
-            msg().send(player, "play.no-race-prepared", "race", race.getName());
+            msg().send(player, "play.no-race-prepared", "race", race);
             return;
         }
         if (active.state() != State.PREPARING) {
@@ -418,7 +418,7 @@ public final class RaceService {
         racer.moved(player.getLocation(), System.nanoTime());
         giveSteeringItem(player, race);
         if (!mountOnGrid(racer, race)) {
-            msg().send(player, "play.vehicle-failed", "race", race.getName());
+            msg().send(player, "play.vehicle-failed", "race", race);
             withdraw(active, racer, null, true, true);
             return;
         }
@@ -518,17 +518,20 @@ public final class RaceService {
         }
         Location lobby = race.getLobby();
         if (lobby == null) {
-            msg().send(player, "play.not-ready", "race", race.getName());
+            msg().send(player, "play.not-ready", "race", race);
             return;
         }
         teleport(player, lobby);
-        msg().send(player, "play.lobby-teleported", "race", race.getName());
+        msg().send(player, "play.lobby-teleported", "race", race);
     }
 
     // ---------------------------------------------------------------- per-tick tracking
 
     private void tick() {
         tick++;
+        if (tick % 10 == 0) {
+            drawCheckpointParticles();
+        }
         long nowMillis = System.currentTimeMillis();
         for (ActiveRace active : List.copyOf(activeRaces.values())) {
             Race race = active.race();
@@ -553,7 +556,7 @@ public final class RaceService {
                     continue;
                 }
                 if (tick % 5 == 0) {
-                    drawRing(active.zone());
+                    drawRing(active);
                 }
                 if (tick % 100 == 0) {
                     showGatewayBeam(active); // the gateway beam fades after ~10 s, so keep it fresh
@@ -685,8 +688,12 @@ public final class RaceService {
         return false;
     }
 
-    /** A ring of particles showing the zone's radius (the beam itself is a fake end gateway). */
-    private void drawRing(PointZone zone) {
+    /**
+     * A ring of particles showing the zone's radius (the beam itself is a fake end gateway).
+     * Only the race's own racers see it.
+     */
+    private void drawRing(ActiveRace active) {
+        PointZone zone = active.zone();
         if (zone == null || zone.center().getWorld() == null) {
             return;
         }
@@ -694,15 +701,26 @@ public final class RaceService {
         World world = center.getWorld();
         Particle particle = ringParticle();
         int points = Math.max(8, (int) (zone.radius() * 6));
-        for (int i = 0; i < points; i++) {
-            double angle = 2 * Math.PI * i / points;
-            world.spawnParticle(particle, center.getX() + Math.cos(angle) * zone.radius(), center.getY() + 0.2,
-                    center.getZ() + Math.sin(angle) * zone.radius(), 1, 0, 0, 0, 0);
+        for (Racer racer : active.racers()) {
+            Player player = racer.player();
+            if (!player.getWorld().equals(world)) {
+                continue;
+            }
+            for (int i = 0; i < points; i++) {
+                double angle = 2 * Math.PI * i / points;
+                player.spawnParticle(particle, center.getX() + Math.cos(angle) * zone.radius(), center.getY() + 0.2,
+                        center.getZ() + Math.sin(angle) * zone.radius(), 1, 0, 0, 0, 0);
+            }
         }
     }
 
     private Particle ringParticle() {
-        String name = String.valueOf(plugin.getConfig().getString("points-races.ring-particle"));
+        return configParticle("points-races.ring-particle", Particle.END_ROD);
+    }
+
+    /** A particle named in config.yml, or {@code fallback} if it's unknown or needs extra data. */
+    private Particle configParticle(String path, Particle fallback) {
+        String name = String.valueOf(plugin.getConfig().getString(path));
         try {
             Particle particle = Particle.valueOf(name.toUpperCase(Locale.ROOT));
             if (particle.getDataType() == Void.class) {
@@ -711,7 +729,42 @@ public final class RaceService {
         } catch (IllegalArgumentException ignored) {
             // fall through to the default
         }
-        return Particle.END_ROD;
+        return fallback;
+    }
+
+    /**
+     * Twice a second: a small burst of particles at the center of each racer's next checkpoint (start,
+     * then each middle one in order, then finish), for races that have checkpoint particles on. Each racer
+     * only sees their own next checkpoint, from the moment they're in the race (grid and countdown included)
+     * until they leave it; players who aren't racing see nothing.
+     */
+    private void drawCheckpointParticles() {
+        Particle particle = configParticle("checkpoint-particles.particle", Particle.HAPPY_VILLAGER);
+        int amount = Math.max(1, plugin.getConfig().getInt("checkpoint-particles.amount", 6));
+        for (ActiveRace active : activeRaces.values()) {
+            Race race = active.race();
+            if (race.getFormat() == RaceFormat.POINTS || !race.showsCheckpointParticles()) {
+                continue;
+            }
+            for (Racer racer : active.racers()) {
+                Region region = nextCheckpoint(race, racer);
+                Player player = racer.player();
+                if (region != null && player.getWorld().getName().equals(region.world())) {
+                    player.spawnParticle(particle, (region.minX() + region.maxX() + 1) / 2.0,
+                            (region.minY() + region.maxY() + 1) / 2.0, (region.minZ() + region.maxZ() + 1) / 2.0,
+                            amount, 0.3, 0.3, 0.3, 0);
+                }
+            }
+        }
+    }
+
+    /** The checkpoint the racer has to pass next: the start, then each middle checkpoint in order, then the finish. */
+    private static Region nextCheckpoint(Race race, Racer racer) {
+        if (!racer.startPassed()) {
+            return race.getStartCheckpoint();
+        }
+        List<Region> middle = race.getCheckpoints();
+        return racer.nextCheckpoint() < middle.size() ? middle.get(racer.nextCheckpoint()) : race.getFinishCheckpoint();
     }
 
     private void showPointsBar(ActiveRace active, Racer racer, long nowMillis) {
@@ -837,11 +890,14 @@ public final class RaceService {
     /**
      * Detects checkpoint crossings since the last tick. The start checkpoint comes first (solo: it starts
      * the timer; group: the timer already runs from GO). Returns true if the racer finished.
+     * Checkpoints are numbered with the start as 1 and the finish as the last one.
      */
     private boolean checkProgress(ActiveRace active, Racer racer, Location now, long nowNanos) {
         Race race = active.race();
         Player player = racer.player();
         Location from = racer.lastLocation();
+        List<Region> checkpoints = race.getCheckpoints();
+        String total = String.valueOf(checkpointCount(race));
 
         if (!racer.startPassed()) {
             double t = race.getStartCheckpoint().firstEntry(from, now);
@@ -853,11 +909,15 @@ public final class RaceService {
                 racer.startTimer(crossingNanos(racer, t, nowNanos));
                 msg().title(player, "play.go-title", null, 1);
                 player.playSound(now, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 2f);
+            } else {
+                // Group: the clock already runs from GO; confirm the start like any other checkpoint.
+                long splitMs = (crossingNanos(racer, t, nowNanos) - racer.startNanos()) / 1_000_000L;
+                player.playSound(now, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
+                msg().send(player, "play.checkpoint", "number", "1", "total", total, "time", Times.format(splitMs));
             }
             return false;
         }
 
-        List<Region> checkpoints = race.getCheckpoints();
         while (racer.nextCheckpoint() < checkpoints.size()) {
             double t = checkpoints.get(racer.nextCheckpoint()).firstEntry(from, now);
             if (t < 0 || !canPassCheckpoint(race, racer, nowNanos, false)) {
@@ -866,15 +926,15 @@ public final class RaceService {
             long splitMs = (crossingNanos(racer, t, nowNanos) - racer.startNanos()) / 1_000_000L;
             racer.passCheckpoint(splitMs);
             player.playSound(now, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
-            msg().send(player, "play.checkpoint", "number", String.valueOf(racer.nextCheckpoint()),
-                    "total", String.valueOf(checkpoints.size()), "time", Times.format(splitMs));
+            msg().send(player, "play.checkpoint", "number", String.valueOf(passedCount(racer)),
+                    "total", total, "time", Times.format(splitMs));
         }
 
         Region finish = race.getFinishCheckpoint();
         if (racer.nextCheckpoint() < checkpoints.size()) {
             boolean inFinish = finish.contains(now);
             if (inFinish && !racer.warnedAtFinish()) {
-                msg().send(player, "play.missed-checkpoint", "number", String.valueOf(racer.nextCheckpoint() + 1));
+                msg().send(player, "play.missed-checkpoint", "number", String.valueOf(passedCount(racer) + 1));
             }
             racer.setWarnedAtFinish(inFinish);
             return false;
@@ -885,6 +945,16 @@ public final class RaceService {
         }
         finish(active, racer, (crossingNanos(racer, t, nowNanos) - racer.startNanos()) / 1_000_000L);
         return true;
+    }
+
+    /** All checkpoints a racer passes: start + middle checkpoints + finish. */
+    private static int checkpointCount(Race race) {
+        return race.getCheckpoints().size() + 2;
+    }
+
+    /** How many checkpoints the racer has passed so far, counting the start. */
+    private static int passedCount(Racer racer) {
+        return (racer.startPassed() ? 1 : 0) + racer.nextCheckpoint();
     }
 
     /** Interpolates when, between the last tick and now, the racer crossed a line. */
@@ -923,9 +993,8 @@ public final class RaceService {
             msg().actionBar(racer.player(), msg().get("play.actionbar-waiting"));
             return;
         }
-        int total = race.getCheckpoints().size();
-        Component checkpoints = total == 0 ? Component.empty() : msg().get("play.actionbar-checkpoints",
-                "passed", String.valueOf(racer.nextCheckpoint()), "total", String.valueOf(total));
+        Component checkpoints = msg().get("play.actionbar-checkpoints",
+                "passed", String.valueOf(passedCount(racer)), "total", String.valueOf(checkpointCount(race)));
         msg().actionBar(racer.player(), msg().get("play.actionbar-timer",
                 "time", Times.format(racer.elapsedMillis(nowNanos)), "checkpoints", checkpoints));
     }
@@ -946,7 +1015,7 @@ public final class RaceService {
 
         if (active.isSolo()) {
             msg().title(player, "play.finished-title", "play.finished-subtitle", 3, "time", time);
-            msg().send(player, "play.finished", "race", race.getName(), "time", time);
+            msg().send(player, "play.finished", "race", race, "time", time);
             saveSolo(active, racer, RunStatus.FINISHED, null, timeMs);
             return;
         }
@@ -954,7 +1023,7 @@ public final class RaceService {
         int placing = active.nextPlacing();
         String place = ordinal(placing);
         msg().title(player, "play.finished-title", "play.finished-place-subtitle", 3, "place", place, "time", time);
-        msg().send(player, "play.finished-place", "race", race.getName(), "place", place, "time", time);
+        msg().send(player, "play.finished-place", "race", race, "place", place, "time", time);
         active.addResult(run(racer, RunStatus.FINISHED, null, timeMs, placing, null));
 
         if (placing == 1 && !active.isEmpty()) {
@@ -984,7 +1053,7 @@ public final class RaceService {
         }
         msg().actionBar(player, Component.empty());
         if (messageKey != null) {
-            msg().send(player, messageKey, "race", race.getName(),
+            msg().send(player, messageKey, "race", race,
                     "max", Times.formatSeconds(race.getSetting(RaceSetting.MAX_TIME)));
         }
         if (active.isSolo()) {
@@ -1019,7 +1088,7 @@ public final class RaceService {
         Component reasonText = msg().get("play.dq." + reason.key(), "vehicle", vehicleName(race));
         if (reason != DqReason.LOGOUT) {
             msg().title(player, "play.dq-title", "play.dq-subtitle", 3, "reason", reasonText);
-            msg().send(player, "play.dq-chat", "race", race.getName(), "reason", reasonText);
+            msg().send(player, "play.dq-chat", "race", race, "reason", reasonText);
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
         }
         if (running) {
@@ -1045,13 +1114,13 @@ public final class RaceService {
             teleport(player, active.race().getLobby());
         }
         if (messageKey != null) {
-            msg().send(player, messageKey, "race", active.race().getName());
+            msg().send(player, messageKey, "race", active.race());
         }
         if (active.isLeader(player) && (voluntary || active.state() == State.PREPARING)) {
             cancelRace(active, "play.leader-left");
             return;
         }
-        notifyRacers(active, null, "play.player-left", "player", player.getName(), "race", active.race().getName());
+        notifyRacers(active, null, "play.player-left", "player", player.getName(), "race", active.race());
         if (active.isEmpty()) {
             cancelRace(active, "play.cancelled");
         }
@@ -1083,10 +1152,10 @@ public final class RaceService {
                 // time_ms: when they reached their final score (shown on leaderboards as a tie-breaker)
                 Long scoredAt = racer.points() == 0 ? null : (racer.lastScoreNanos() - racer.startNanos()) / 1_000_000L;
                 active.addResult(run(racer, RunStatus.FINISHED, null, scoredAt, place, racer.points()));
-                msg().send(player, "play.points-final", "race", race.getName(), "place", ordinal(place),
+                msg().send(player, "play.points-final", "race", race, "place", ordinal(place),
                         "points", String.valueOf(racer.points()));
             } else {
-                msg().send(player, "play.dnf-time-up", "race", race.getName());
+                msg().send(player, "play.dnf-time-up", "race", race);
                 active.addResult(run(racer, RunStatus.DNF, "time-up", null, null, null));
             }
         }
@@ -1115,7 +1184,7 @@ public final class RaceService {
     }
 
     private void announceResults(ActiveRace active, List<RaceRecord.Run> results) {
-        Component header = msg().get("play.results-header", "race", active.race().getName());
+        Component header = msg().get("play.results-header", "race", active.race());
         List<Component> lines = results.stream().map(run -> {
             if (run.status() != RunStatus.FINISHED) {
                 return msg().get("play.results-other", "player", run.playerName(), "status", run.status().name());
@@ -1152,7 +1221,7 @@ public final class RaceService {
                 teleport(player, active.race().getLobby());
             }
             msg().actionBar(player, Component.empty());
-            msg().send(player, messageKey, "race", active.race().getName());
+            msg().send(player, messageKey, "race", active.race());
         }
     }
 

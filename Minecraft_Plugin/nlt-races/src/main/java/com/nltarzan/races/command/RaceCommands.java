@@ -23,7 +23,9 @@ import java.util.logging.Level;
 /** create, delete, list, info, edit, reload. */
 final class RaceCommands extends CommandGroup {
 
-    private static final List<String> ENUM_KEYS = List.of("format", "travel", "vehicle", "boat", "rules");
+    private static final List<String> ENUM_KEYS =
+            List.of("name", "format", "travel", "vehicle", "boat", "rules", "checkpoint-particles");
+    private static final int MAX_DISPLAY_NAME = 48;
 
     RaceCommands(NltRacesPlugin plugin) {
         super(plugin);
@@ -62,21 +64,21 @@ final class RaceCommands extends CommandGroup {
         String name = race.getName();
         if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
             String command = "/" + label + " cleartimes " + name + " confirm";
-            msg().send(sender, "cleartimes.confirm", "race", name, "label", label,
-                    "confirm", msg().button("cleartimes.button", command, "race", name));
+            msg().send(sender, "cleartimes.confirm", "race", race, "label", label,
+                    "confirm", msg().button("cleartimes.button", command, "race", race));
             return;
         }
         plugin.getRunStore().deleteCourse(name).whenComplete((runs, error) -> plugin.sync(() -> {
             if (error != null) {
                 plugin.getLogger().log(Level.SEVERE, "Could not clear the times of race " + name, error);
-                msg().send(sender, "cleartimes.failed", "race", name);
+                msg().send(sender, "cleartimes.failed", "race", race);
                 return;
             }
             Race current = races().get(name);
             if (current != null) {
                 plugin.getLeaderboards().refresh(current);
             }
-            msg().send(sender, "cleartimes.done", "race", name, "runs", String.valueOf(runs));
+            msg().send(sender, "cleartimes.done", "race", race, "runs", String.valueOf(runs));
         }));
     }
 
@@ -117,9 +119,9 @@ final class RaceCommands extends CommandGroup {
         }
         int sent = plugin.getRaceService().cancel(race);
         if (sent < 0) {
-            msg().send(sender, "cancel.not-running", "race", race.getName());
+            msg().send(sender, "cancel.not-running", "race", race);
         } else {
-            msg().send(sender, "cancel.race", "race", race.getName(), "count", String.valueOf(sent));
+            msg().send(sender, "cancel.race", "race", race, "count", String.valueOf(sent));
         }
     }
 
@@ -169,7 +171,7 @@ final class RaceCommands extends CommandGroup {
             }
         }
         Race race = races().create(name, format, travel, vehicle);
-        msg().send(sender, "race.created", "race", name, "format", Enums.display(format),
+        msg().send(sender, "race.created", "race", race, "format", Enums.display(format),
                 "travel", RaceInfo.travelText(race), "label", label);
         if (sender instanceof Player player) {
             // A new race goes through every step, including optional ones like middle checkpoints.
@@ -194,8 +196,8 @@ final class RaceCommands extends CommandGroup {
         }
         if (args.length < 2 || !args[1].equalsIgnoreCase("confirm")) {
             String command = "/" + label + " delete " + race.getName() + " confirm";
-            msg().send(sender, "race.delete-confirm", "race", race.getName(), "label", label,
-                    "confirm", msg().button("race.delete-button", command, "race", race.getName()));
+            msg().send(sender, "race.delete-confirm", "race", race, "label", label,
+                    "confirm", msg().button("race.delete-button", command, "race", race));
             return;
         }
         String name = race.getName();
@@ -219,7 +221,7 @@ final class RaceCommands extends CommandGroup {
         }
         msg().send(sender, "list.header", "count", String.valueOf(races().all().size()));
         for (Race race : races().all()) {
-            msg().sendRaw(sender, "list.line", "race", race.getName(),
+            msg().sendRaw(sender, "list.line", "race", race,
                     "format", Enums.display(race.getFormat()), "travel", RaceInfo.travelText(race),
                     "status", msg().get(race.isReady() ? "list.ready" : "list.not-ready"));
         }
@@ -259,7 +261,7 @@ final class RaceCommands extends CommandGroup {
             }
             case "vehicle" -> {
                 if (race.getTravel() != TravelMode.VEHICLE) {
-                    msg().send(sender, "set.vehicle-needs-travel", "race", race.getName(), "label", label);
+                    msg().send(sender, "set.vehicle-needs-travel", "race", race, "label", label);
                     return;
                 }
                 VehicleType vehicle = option(sender, VehicleType.class, "vehicle", value);
@@ -267,6 +269,31 @@ final class RaceCommands extends CommandGroup {
                     return;
                 }
                 race.setVehicle(vehicle);
+            }
+            case "name" -> {
+                // Everything after "name" is the display name, so it can contain spaces.
+                String customName = String.join(" ", Arrays.copyOfRange(args, 2, args.length)).trim();
+                if (customName.length() > MAX_DISPLAY_NAME) {
+                    msg().send(sender, "set.name-too-long", "max", String.valueOf(MAX_DISPLAY_NAME));
+                    return;
+                }
+                race.setCustomName(customName.equalsIgnoreCase("reset") ? null : customName);
+                races().save(race);
+                msg().send(sender, "set.name-updated", "race", race);
+                return;
+            }
+            case "checkpoint-particles" -> {
+                switch (value.toLowerCase(Locale.ROOT)) {
+                    case "on", "true" -> race.setCheckpointParticles(true);
+                    case "off", "false" -> race.setCheckpointParticles(false);
+                    case "auto" -> race.setCheckpointParticles(null);
+                    default -> {
+                        msg().send(sender, "general.invalid-option", "what", "value", "value", value,
+                                "options", "on, off, auto");
+                        return;
+                    }
+                }
+                noteIfUnused(sender, race, race.getFormat() != RaceFormat.POINTS);
             }
             case "boat" -> {
                 BoatWood wood = option(sender, BoatWood.class, "boat type", value);
@@ -304,7 +331,7 @@ final class RaceCommands extends CommandGroup {
             }
         }
         races().save(race);
-        msg().send(sender, "set.updated", "race", race.getName(), "key", key, "value", value.toLowerCase(Locale.ROOT));
+        msg().send(sender, "set.updated", "race", race, "key", key, "value", value.toLowerCase(Locale.ROOT));
         if (race.getTravel() == TravelMode.VEHICLE && race.getVehicle() == null) {
             msg().send(sender, "race.vehicle-required",
                     "options", String.join(", ", Enums.options(VehicleType.class)));
@@ -327,6 +354,8 @@ final class RaceCommands extends CommandGroup {
                 case "vehicle" -> filter(Enums.options(VehicleType.class), args[2]);
                 case "boat" -> filter(Enums.options(BoatWood.class), args[2]);
                 case "rules" -> filter(Enums.options(Rules.class), args[2]);
+                case "checkpoint-particles" -> filter(List.of("on", "off", "auto"), args[2]);
+                case "name" -> filter(List.of("reset"), args[2]);
                 default -> currentValue(args[0], args[1]); // number settings: suggest the current value
             };
             default -> List.of();

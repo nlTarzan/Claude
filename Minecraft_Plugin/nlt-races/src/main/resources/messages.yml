@@ -4,8 +4,8 @@
 # Run /nltraces reload after editing.
 
 # Don't change this. When a plugin update rewords messages, it raises this number; your old file is then
-# saved as messages-backup.yml and replaced, so copy any custom texts back from there.
-messages-version: 8
+# moved to the backups folder and replaced, so copy any custom texts back from there.
+messages-version: 9
 
 prefix: '<gold>[nlT-Races]</gold> '
 
@@ -130,7 +130,7 @@ race:
   exists: '<red>A race called <yellow><race></yellow> already exists.</red>'
   vehicle-required: '<red>Vehicle races need a vehicle type. Choose from: <yellow><options></yellow></red>'
   created: '<green>Created <format> race <yellow><race></yellow> (<travel>).</green>'
-  delete-confirm: '<red>This permanently deletes race <yellow><race></yellow>: its locations, buttons <bold>and all its recorded times</bold>.</red><newline><confirm> <gray>(or type <yellow>/<label> delete <race> confirm</yellow>)</gray>'
+  delete-confirm: '<red>This permanently deletes race <yellow><race></yellow>: its locations, buttons <bold>and all its recorded times</bold>.</red><newline><confirm> <gray>(or type <yellow>/<label> delete <race-id> confirm</yellow>)</gray>'
   delete-button: '<red><bold>[Delete <race> permanently]</bold></red>'
   deleted: '<green>Deleted race <yellow><race></yellow> and its <runs> recorded run(s).</green>'
   deleted-times-failed: '<red>Race <yellow><race></yellow> was deleted, but its times couldn''t be removed from the database. Check the server log.</red>'
@@ -138,38 +138,40 @@ race:
 list:
   empty: '<gray>There are no races yet. Create one with <yellow>/<label> create</yellow>.</gray>'
   header: '<gray>Races (<count>):</gray>'
-  line: '  <yellow><race></yellow> <gray>– <format>, <travel></gray> <status>'
+  line: '  <yellow><race-id></yellow> <white><race></white> <gray>– <format>, <travel></gray> <status>'
   ready: '<green>✔ ready</green>'
   not-ready: '<red>✘ not ready</red>'
 
 info:
-  header: '<gold><bold><race></bold></gold> <gray>– <format>, <travel>, <rules> rules</gray>'
+  header: '<gold><bold><race></bold></gold> <dark_gray>[<race-id>]</dark_gray> <gray>– <format>, <travel>, <rules> rules</gray>'
   line: '  <gray><name>:</gray> <white><value></white>'
   not-set: '<red>not set</red>'
   ready: '<green>This race is ready to use.</green>'
-  missing-header: '<red>Still needed before this race can be used</red> <gray>(<yellow>/<label> setup <race></yellow> walks you through it)</gray><red>:</red>'
+  missing-header: '<red>Still needed before this race can be used</red> <gray>(<yellow>/<label> setup <race-id></yellow> walks you through it)</gray><red>:</red>'
   missing-line: '  <red>-</red> <gray><item></gray>'
   missing:
-    lobby: 'a lobby (<yellow>/<label> set \<race> lobby</yellow>)'
-    vehicle: 'a vehicle type (<yellow>/<label> edit \<race> vehicle \<type></yellow>)'
-    solo-start: 'a start location (<yellow>/<label> set \<race> start</yellow>)'
-    solo-start-inside: 'the start location is inside the start checkpoint. Move it just behind the start line (<yellow>/<label> set \<race> start</yellow>)'
-    grid: 'a starting grid (<yellow>/<label> set \<race> grid addslot</yellow>)'
-    podium-1: 'podium place 1 (<yellow>/<label> set \<race> podium 1</yellow>)'
-    podium-2: 'podium place 2 (<yellow>/<label> set \<race> podium 2</yellow>)'
-    podium-3: 'podium place 3 (<yellow>/<label> set \<race> podium 3</yellow>)'
-    point-zones: 'at least 2 point zones (<yellow>/<label> set \<race> pointzone add</yellow>)'
-    start-checkpoint: 'a start checkpoint (<yellow>/<label> set \<race> checkpoint start</yellow>)'
-    finish-checkpoint: 'a finish checkpoint (<yellow>/<label> set \<race> checkpoint finish</yellow>)'
-    button-prep: 'a prep button (<yellow>/<label> link \<race> prep</yellow>)'
-    button-start: 'a start button (<yellow>/<label> link \<race> start</yellow>)'
-    button-join: 'a join button (<yellow>/<label> link \<race> join</yellow>)'
+    lobby: 'a lobby (<yellow>/<label> set <race-id> lobby</yellow>)'
+    vehicle: 'a vehicle type (<yellow>/<label> edit <race-id> vehicle \<type></yellow>)'
+    solo-start: 'a start location (<yellow>/<label> set <race-id> start</yellow>)'
+    solo-start-inside: 'the start location is inside the start checkpoint. Move it just behind the start line (<yellow>/<label> set <race-id> start</yellow>)'
+    grid: 'a starting grid (<yellow>/<label> set <race-id> grid addslot</yellow>)'
+    podium-1: 'podium place 1 (<yellow>/<label> set <race-id> podium 1</yellow>)'
+    podium-2: 'podium place 2 (<yellow>/<label> set <race-id> podium 2</yellow>)'
+    podium-3: 'podium place 3 (<yellow>/<label> set <race-id> podium 3</yellow>)'
+    point-zones: 'at least 2 point zones (<yellow>/<label> set <race-id> pointzone add</yellow>)'
+    start-checkpoint: 'a start checkpoint (<yellow>/<label> set <race-id> checkpoint start</yellow>)'
+    finish-checkpoint: 'a finish checkpoint (<yellow>/<label> set <race-id> checkpoint finish</yellow>)'
+    button-prep: 'a prep button (<yellow>/<label> link <race-id> prep</yellow>)'
+    button-start: 'a start button (<yellow>/<label> link <race-id> start</yellow>)'
+    button-join: 'a join button (<yellow>/<label> link <race-id> join</yellow>)'
 
 set:
   updated: '<green>Set <yellow><key></yellow> of <yellow><race></yellow> to <yellow><value></yellow>.</green>'
   unknown-key: '<red>Unknown setting <yellow><key></yellow>. Choose from: <yellow><options></yellow></red>'
   out-of-range: '<red><key> must be between <min> and <max>.</red>'
-  vehicle-needs-travel: '<red><race> isn''t a vehicle race. Use <yellow>/<label> edit <race> travel vehicle</yellow> first.</red>'
+  name-updated: '<green>Players now see <yellow><race-id></yellow> as <yellow><race></yellow>.</green>'
+  name-too-long: '<red>The name can be at most <max> characters.</red>'
+  vehicle-needs-travel: '<red><race> isn''t a vehicle race. Use <yellow>/<label> edit <race-id> travel vehicle</yellow> first.</red>'
 
 # Right-click setup: /nltraces setup (guided) and /nltraces set (one item).
 setup:
@@ -205,10 +207,10 @@ setup:
   went-back-repeating: '<gray>« Back to the <step>. New clicks add more.</gray>'
   moved-on: '<gray>» Moving on from the <step></gray>'
   at-first-step: '<red>This is already the first step.</red>'
-  nothing-missing: '<green>Everything <yellow><race></yellow> needs is set. Use <yellow>/<label> setup <race> start</yellow> to go through every step again.</green>'
+  nothing-missing: '<green>Everything <yellow><race></yellow> needs is set. Use <yellow>/<label> setup <race-id> start</yellow> to go through every step again.</green>'
   finished: '<newline><green><bold>✔ Setup of <race> finished.</bold></green> <gray>Everything you set is saved.</gray>'
   cancelled: '<gray>Your setup was stopped because the plugin reloaded. Run the setup command again to continue.</gray>'
-  not-in-setup: '<red>You''re not setting up <yellow><race></yellow>. Start with <yellow>/<label> setup <race></yellow>.</red>'
+  not-in-setup: '<red>You''re not setting up <yellow><race></yellow>. Start with <yellow>/<label> setup <race-id></yellow>.</red>'
   invalid-podium: '<red>The podium place must be 1, 2 or 3.</red>'
   actionbar: '<gray>Setting up <yellow><race></yellow> › <white><step></white></gray>'
   # What each step is called in the messages above.
@@ -230,7 +232,7 @@ setup:
     lobby: 'lobby'
 
 cleartimes:
-  confirm: '<red>This permanently deletes <bold>all recorded times</bold> of <yellow><race></yellow> (the race itself is kept).</red><newline><confirm> <gray>(or type <yellow>/<label> cleartimes <race> confirm</yellow>)</gray>'
+  confirm: '<red>This permanently deletes <bold>all recorded times</bold> of <yellow><race></yellow> (the race itself is kept).</red><newline><confirm> <gray>(or type <yellow>/<label> cleartimes <race-id> confirm</yellow>)</gray>'
   button: '<red><bold>[Clear all times of <race>]</bold></red>'
   done: '<green>Deleted <runs> recorded run(s) of <yellow><race></yellow>. Its leaderboards are now empty.</green>'
   failed: '<red>The times of <yellow><race></yellow> couldn''t be deleted. Check the server log.</red>'

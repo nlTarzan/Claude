@@ -24,10 +24,19 @@ placeholders:
   empty: '---'
   # The full placeholder; the _name and _value versions give just one part.
   entry: '{name} - {value}'
-  # Points races. Times look like 1:23.456.
+  # Points races. Times look like 23.456, or 1:23.45 from a minute on.
   points: '{points} pts'
   dq: 'DQ'
   dnf: 'DNF'
+  # %nltraces_<race>_cycle_<1-5>_name% and _value show the day, week and month top 5 in turn.
+  # %nltraces_cycle_title% (one for all races) names the one showing, using these titles.
+  cycle:
+    # How many seconds each period shows before swapping to the next. 20 = a full loop every minute.
+    seconds: 20
+    titles:
+      day: 'Daily Leaderboard'
+      week: 'Weekly Leaderboard'
+      month: 'Monthly Leaderboard'
 
 # While you use /nltraces setup or set, the blocks you click are shown as these marker blocks.
 # Only you see them; the world itself isn't changed. Use any block name, e.g. GLASS or GOLD_BLOCK.
@@ -39,6 +48,14 @@ setup-markers:
   point-zone: OCHRE_FROGLIGHT
   # Seconds the markers stay visible after you finish a setup.
   linger-seconds: 5
+
+# Particles at the center of each racer's next checkpoint, for races where it's switched on. Only that racer sees them
+# (/nltraces edit <race> checkpoint-particles on|off|auto; auto = on when the race has middle checkpoints).
+checkpoint-particles:
+  # Any particle without extra data, e.g. HAPPY_VILLAGER, END_ROD, FLAME, ELECTRIC_SPARK.
+  particle: HAPPY_VILLAGER
+  # Particles per burst (two bursts a second).
+  amount: 6
 
 # Points races. The active zone is shown to racers as an end gateway beam, with a particle ring at its radius.
 # A point scores when a racer comes within the zone's radius of its center (a sphere).

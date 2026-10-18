@@ -17,6 +17,10 @@ public final class Race {
     public static final int MIN_POINT_ZONES = 2;
 
     private final String name;
+    /** What players see in messages, e.g. "Sky Zones Grand Prix". Null means the ID ({@link #name}) is shown. */
+    private String customName;
+    /** Particles at the center of every checkpoint. Null means automatic: on when there are middle checkpoints. */
+    private Boolean checkpointParticles;
     private RaceFormat format;
     private TravelMode travel;
     private VehicleType vehicle;
@@ -110,8 +114,37 @@ public final class Race {
         return location == null ? null : location.clone();
     }
 
+    /** The race's ID: lowercase, used in commands, files, the database and placeholders. */
     public String getName() {
         return name;
+    }
+
+    /** The name shown to players: the custom name if one is set, otherwise the ID. */
+    public String displayName() {
+        return customName != null ? customName : name;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    /** @param customName any text (spaces allowed), or null to show the ID again */
+    public void setCustomName(String customName) {
+        this.customName = customName == null || customName.isBlank() ? null : customName.trim();
+    }
+
+    /** The setting as stored: true, false, or null for automatic. */
+    public Boolean getCheckpointParticlesSetting() {
+        return checkpointParticles;
+    }
+
+    public void setCheckpointParticles(Boolean checkpointParticles) {
+        this.checkpointParticles = checkpointParticles;
+    }
+
+    /** Whether checkpoint particles show: the setting, or automatically when there are middle checkpoints. */
+    public boolean showsCheckpointParticles() {
+        return checkpointParticles != null ? checkpointParticles : !checkpoints.isEmpty();
     }
 
     public RaceFormat getFormat() {
