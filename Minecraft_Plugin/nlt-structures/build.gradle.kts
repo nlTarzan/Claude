@@ -45,22 +45,11 @@ tasks.jar {
     archiveFileName.set("nlT-Structures-${project.version}.jar")
 }
 
-// The .nbt structures are taken straight from the datapack, so the datapack stays the single
-// source of truth while you keep editing structures in-game.
-val datapackStructures = layout.projectDirectory.dir("../Structures/data/structures/structure/monument")
-
 tasks.processResources {
     val props = mapOf("version" to project.version, "apiVersion" to minecraftVersion)
     inputs.properties(props)
     filesMatching("plugin.yml") {
         expand(props)
-    }
-    from(datapackStructures.dir("pre-gen")) {
-        into("structures/monument/pre-gen")
-    }
-    from(datapackStructures.dir("maze")) {
-        into("structures/monument/maze")
-        exclude("maze_nodes.nbt") // obsolete, the nodes are generated
     }
 }
 

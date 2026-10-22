@@ -27,7 +27,8 @@ This document explains the nlT-Structures plugin file by file. It brings togethe
 ```
 nlt-structures/
 ├── build.gradle.kts, settings.gradle.kts      the build
-├── src/main/resources/                         plugin.yml, messages.yml, monuments/monuments.yml
+├── src/main/resources/                         plugin.yml, messages.yml, monuments/monuments.yml,
+│                                               structures/monument/ (the .nbt templates)
 ├── src/main/java/com/nltarzan/structures/      the plugin's code
 │   ├── NltStructuresPlugin.java, StructureModule.java
 │   ├── command/        the shared /nltstructures command
@@ -57,7 +58,7 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 
 @code build.gradle.kts 1-6
 
-- **Line 1:** makes the type `RunServer` available, for the 26.3 test server further down (line 81). It works like `import` in Java.
+- **Line 1:** makes the type `RunServer` available, for the 26.3 test server further down (line 70). It works like `import` in Java.
 - **Line 4:** the `java` plugin. Gradle learns to compile Java, run tests and build a jar. This creates the tasks `build`, `test`, `jar` and `clean`.
 - **Line 5:** the **run-paper** plugin (version 3.1.0). It adds `runServer`, which downloads Paper, adds your plugin and starts a test server.
 
@@ -66,7 +67,7 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 @code build.gradle.kts 8-13
 
 - **Line 8:** who made it, written as a reversed domain name. It matches the Java packages (`com.nltarzan.structures…`). It only really matters if you ever publish the plugin as a library for other developers.
-- **Line 9:** the plugin version. It appears in the jar name, in `plugin.yml` (via line 53) and in `/plugins`. Raise it with each release, for example `0.2.0`.
+- **Line 9:** the plugin version. It appears in the jar name, in `plugin.yml` (via line 49) and in `/plugins`. Raise it with each release, for example `0.2.0`.
 - **Line 13:** a variable used twice: as the `api-version` in `plugin.yml`, and as the version of the test server. Lines 11–12 explain that `26.2` means "26.2 or newer", so 26.3 works too.
 
 ### Lines 15–18: where libraries come from
@@ -98,34 +99,31 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 - **Line 41:** tells Gradle the tests are JUnit tests. Without it, `test` finds nothing.
 - **Line 45:** the jar's file name: `nlT-Structures-0.1.0.jar`, written like the plugin's name and like nlT-Races' `nlT-Races-0.1.0.jar`. `${project.version}` fills in the version from line 9.
 
-### Lines 48–65: what goes into the jar besides the code
+### Lines 48–54: filling in plugin.yml
 
-@code build.gradle.kts 48-65
+@code build.gradle.kts 48-54
 
-`processResources` copies `src/main/resources` (`plugin.yml`, `messages.yml`, `monuments/monuments.yml`) into the jar. Here it does a bit more:
+`processResources` copies everything in `src/main/resources` into the jar: `plugin.yml`, `messages.yml`, `monuments/monuments.yml` and the monument structures in `structures/monument/` (the 44 pre-built quadrant files in `pre-gen/`, the 19 maze templates in `maze/`). Here it does one thing more:
 
-- **Line 50:** the path to the monument structures in your datapack, one folder up (`../`) from the project. The `.nbt` files aren't copied into the plugin's source; they're read from the datapack on every build. If you save a structure to the datapack in-game, the next build picks it up.
-- **Line 53:** the values to fill into `plugin.yml`: the version (line 9) and the API version (line 13).
-- **Line 54:** tells Gradle this step depends on those values, so a version change makes it run again instead of reusing an old result.
-- **Lines 55–57:** replaces the placeholders `${version}` and `${apiVersion}` in `plugin.yml` with those values.
-- **Lines 58–60:** copies the 44 pre-built quadrant files into the jar under `structures/monument/pre-gen/`.
-- **Lines 61–64:** copies the 19 maze templates (rooms, shell, wings, penthouse, `roof_open`) under `structures/monument/maze/`. It skips `maze_nodes.nbt`, which your datapack already called obsolete; the plugin works out the node positions itself.
+- **Line 49:** the values to fill into `plugin.yml`: the version (line 9) and the API version (line 13).
+- **Line 50:** tells Gradle this step depends on those values, so a version change makes it run again instead of reusing an old result.
+- **Lines 51–53:** replaces the placeholders `${version}` and `${apiVersion}` in `plugin.yml` with those values.
 
-The folder inside the jar is called `structures/monument/`, which fits the plan for more structures: a mansion would go in `structures/mansion/`.
+The `.nbt` files came from your old "Structures" datapack and now live in the plugin itself, so the plugin no longer needs the datapack. If you change a structure in-game, save it with a structure block and copy the new `.nbt` over the old one in `src/main/resources/structures/monument/`. The folder is called `structures/monument/`, which fits the plan for more structures: a mansion would go in `structures/mansion/`.
 
-### Lines 67–87: test servers
+### Lines 56–76: test servers
 
-@code build.gradle.kts 67-87
+@code build.gradle.kts 56-76
 
-- **Lines 70–74:** *every* test server task (`withType<RunServer>`) downloads LuckPerms v5.5.71 from Modrinth into its plugins folder.
-- **Lines 76–79:** the standard `runServer` task.
-  - **Line 77:** Paper 26.2.
-  - **Line 78:** the server lives in `run/26.2`: world, `server.properties`, `eula.txt` and `plugins/nlT-Structures/`.
-- **Lines 81–87:** a self-made second task, `runServer26_3`.
-  - **Lines 82–83:** how it appears in Gradle's task list.
-  - **Line 84:** Paper 26.3.
-  - **Line 85:** its own folder, so the two worlds never mix.
-  - **Line 86:** adds your plugin jar. `runServer` does this automatically; a self-made task has to be told. `flatMap` means "whatever file the jar task produces", so the jar is built first.
+- **Lines 59–63:** *every* test server task (`withType<RunServer>`) downloads LuckPerms v5.5.71 from Modrinth into its plugins folder.
+- **Lines 65–68:** the standard `runServer` task.
+  - **Line 66:** Paper 26.2.
+  - **Line 67:** the server lives in `run/26.2`: world, `server.properties`, `eula.txt` and `plugins/nlT-Structures/`.
+- **Lines 70–76:** a self-made second task, `runServer26_3`.
+  - **Lines 71–72:** how it appears in Gradle's task list.
+  - **Line 73:** Paper 26.3.
+  - **Line 74:** its own folder, so the two worlds never mix.
+  - **Line 75:** adds your plugin jar. `runServer` does this automatically; a self-made task has to be told. `flatMap` means "whatever file the jar task produces", so the jar is built first.
 
 **The files Gradle brought along:**
 

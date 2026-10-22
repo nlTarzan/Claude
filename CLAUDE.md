@@ -14,7 +14,7 @@ One git repo for the whole `Claude` folder (`main`, remote `origin` = https://gi
 
 | Folder | What it is |
 |---|---|
-| `Minecraft_Plugin/Structures` | The original "Structures" datapack. Its `.nbt` files are the source of the monument structures: `nlt-structures` copies them into its jar at build time |
+| `Minecraft_Plugin/Structures` | The original "Structures" datapack, no longer used on the server (kept for reference). Its monument `.nbt` files were moved to `nlt-structures/src/main/resources/structures/monument/` on 2026-10-22 |
 | `Minecraft_Plugin/nlt-structures` | **nlT-Structures** Paper plugin (was "ResettingStructures" / `resetting-structures`, renamed 2026-10-08) |
 | `Minecraft_Plugin/nlt-races` | **nlT-Races** Paper plugin. Design and decisions are in its `DESIGN.md` |
 
