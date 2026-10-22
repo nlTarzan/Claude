@@ -3,7 +3,7 @@
 
 **Requirements**
 
-- Paper 26.2 or newer (or a Paper fork such as Purpur), running on Java 25. It doesn't run on plain Spigot.
+- Paper 26.3 or newer (or a Paper fork such as Purpur), running on Java 25. It doesn't run on plain Spigot.
 - A permissions plugin such as **LuckPerms**, to give admins the plugin's permission. Nobody has it by default, not even operators.
 - Optional: a protection plugin such as **GriefDefender**. The plugin works alongside it; see section 9 (The Monument Hoe).
 

@@ -3,7 +3,7 @@
 
 **Requirements**
 
-- Paper 26.2 or newer (or a Paper fork such as Purpur), running on Java 25. It doesn't run on plain Spigot.
+- Paper 26.3 or newer (or a Paper fork such as Purpur), running on Java 25. It doesn't run on plain Spigot.
 - Optional: **PlaceholderAPI**, for the leaderboard placeholders.
 - Optional: a hologram plugin such as **DecentHolograms**, to show the leaderboards in the world.
 - A permissions plugin such as **LuckPerms**, to let players use the race buttons.

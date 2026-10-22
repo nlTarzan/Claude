@@ -4,7 +4,7 @@ Status: agreed 2026-10-08. Change this file when decisions change.
 
 ## Technical setup
 
-- **Platform:** Paper API `26.2.build.132-stable` (minimum Paper 26.2). It runs on Paper and Paper forks such as Purpur, not on plain Spigot. It's a classic `plugin.yml` plugin using the Paper API, with Bukkit-style commands. Changed from Spigot on 2026-10-08.
+- **Platform:** Paper API `26.3.build.209-stable` (minimum Paper 26.3; moved up from 26.2 on 2026-10-22). It runs on Paper and Paper forks such as Purpur, not on plain Spigot. It's a classic `plugin.yml` plugin using the Paper API, with Bukkit-style commands. Changed from Spigot on 2026-10-08.
 - **Java:** Java 25, which Paper 26.x requires and its API is compiled for. Built with Gradle 9.8 through the wrapper (`gradlew`).
 - **Messages:** MiniMessage format (`<red>`, `<gradient>`, hover/click), sent with Paper's built-in Adventure library. Values such as player names are inserted as plain text.
 - **Package:** `com.nltarzan.races`. Plugin name: `nlT-Races`.

@@ -58,7 +58,7 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 
 @code build.gradle.kts 1-6
 
-- **Line 1:** makes the type `RunServer` available, for the 26.3 test server further down (line 70). It works like `import` in Java.
+- **Line 1:** makes the type `RunServer` available, for the test server settings further down (line 58). It works like `import` in Java.
 - **Line 4:** the `java` plugin. Gradle learns to compile Java, run tests and build a jar. This creates the tasks `build`, `test`, `jar` and `clean`.
 - **Line 5:** the **run-paper** plugin (version 3.1.0). It adds `runServer`, which downloads Paper, adds your plugin and starts a test server.
 
@@ -68,7 +68,7 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 
 - **Line 8:** who made it, written as a reversed domain name. It matches the Java packages (`com.nltarzan.structures…`). It only really matters if you ever publish the plugin as a library for other developers.
 - **Line 9:** the plugin version. It appears in the jar name, in `plugin.yml` (via line 49) and in `/plugins`. Raise it with each release, for example `0.2.0`.
-- **Line 13:** a variable used twice: as the `api-version` in `plugin.yml`, and as the version of the test server. Lines 11–12 explain that `26.2` means "26.2 or newer", so 26.3 works too.
+- **Line 13:** a variable used twice: as the `api-version` in `plugin.yml`, and as the version of the test server. Lines 11–12 explain that `26.3` means "26.3 or newer", so a later version works too, but 26.2 doesn't.
 
 ### Lines 15–18: where libraries come from
 
@@ -81,7 +81,7 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 
 @code build.gradle.kts 20-29
 
-- **Line 21:** the **Paper API**: everything in the code starting with `org.bukkit` or `io.papermc`. `compileOnly` means "needed to compile, but don't pack it into the jar", because the server already has Paper. `26.2.build.132-stable` is the exact build, the same one nlT-Races uses.
+- **Line 21:** the **Paper API**: everything in the code starting with `org.bukkit` or `io.papermc`. `compileOnly` means "needed to compile, but don't pack it into the jar", because the server already has Paper. `26.3.build.209-stable` is the exact build, the same one nlT-Races uses.
 - **Lines 22–23:** the tests also get the Paper API, because they read YAML files and use text colors. `testImplementation` means it's only used for the tests; it never ends up in the plugin.
 - **Lines 25–28:** **JUnit 6**, for the tests in `src/test`.
   - **Line 25:** a "BOM" that fixes all JUnit parts to version 6.1.3, so lines 26–28 don't need a version of their own.
@@ -111,19 +111,14 @@ The build recipe. Gradle runs it whenever you type `.\gradlew.bat build` or `.\g
 
 The `.nbt` files came from your old "Structures" datapack and now live in the plugin itself, so the plugin no longer needs the datapack. If you change a structure in-game, save it with a structure block and copy the new `.nbt` over the old one in `src/main/resources/structures/monument/`. The folder is called `structures/monument/`, which fits the plan for more structures: a mansion would go in `structures/mansion/`.
 
-### Lines 56–76: test servers
+### Lines 56–67: the test server
 
-@code build.gradle.kts 56-76
+@code build.gradle.kts 56-67
 
-- **Lines 59–63:** *every* test server task (`withType<RunServer>`) downloads LuckPerms v5.5.71 from Modrinth into its plugins folder.
-- **Lines 65–68:** the standard `runServer` task.
-  - **Line 66:** Paper 26.2.
-  - **Line 67:** the server lives in `run/26.2`: world, `server.properties`, `eula.txt` and `plugins/nlT-Structures/`.
-- **Lines 70–76:** a self-made second task, `runServer26_3`.
-  - **Lines 71–72:** how it appears in Gradle's task list.
-  - **Line 73:** Paper 26.3.
-  - **Line 74:** its own folder, so the two worlds never mix.
-  - **Line 75:** adds your plugin jar. `runServer` does this automatically; a self-made task has to be told. `flatMap` means "whatever file the jar task produces", so the jar is built first.
+- **Lines 58–62:** every test server task (`withType<RunServer>`) downloads LuckPerms v5.5.71 from Modrinth into its plugins folder. There's only `runServer` now, but a second test server task would get LuckPerms too.
+- **Lines 64–67:** the `runServer` task.
+  - **Line 65:** the Paper version from line 13, so 26.3.
+  - **Line 66:** the server lives in `run/26.3`: world, `server.properties`, `eula.txt` and `plugins/nlT-Structures/`. Each Minecraft version gets its own folder, so worlds of different versions never mix.
 
 **The files Gradle brought along:**
 
@@ -139,7 +134,7 @@ Paper reads this file first to learn what the plugin is. If it's missing or wron
 - **Line 1:** the plugin's name. It shows in `/plugins` and in log lines (`[nlT-Structures] …`), and it names the plugin's folder: `plugins/nlT-Structures/`.
 - **Line 2:** the version, filled in by the build (`0.1.0`).
 - **Line 3:** the class Paper starts first: `NltStructuresPlugin` in the package `com.nltarzan.structures`. It must be a class that extends `JavaPlugin`. That's the start of step 2.
-- **Line 4:** the minimum Minecraft version (`26.2`). An older server refuses to load the plugin.
+- **Line 4:** the minimum Minecraft version (`26.3`). An older server refuses to load the plugin.
 - **Line 5:** a description, shown in `/version nlT-Structures`.
 - **Line 6:** the author.
 - **Lines 8–11:** the permissions the plugin defines.

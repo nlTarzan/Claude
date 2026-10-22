@@ -8,7 +8,7 @@ version = "0.1.0"
 
 // The Minecraft version we compile against. The plugin.yml api-version is derived from it,
 // so the plugin loads on this version and every newer one.
-val minecraftVersion = "26.2"
+val minecraftVersion = "26.3"
 
 repositories {
     mavenCentral()
@@ -17,13 +17,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.2.build.132-stable")
+    compileOnly("io.papermc.paper:paper-api:26.3.build.209-stable")
     // Optional at runtime (softdepend): the leaderboard placeholders are only registered when it's installed.
     compileOnly("me.clip:placeholderapi:2.12.3")
     // Downloaded by the server at runtime through `libraries:` in plugin.yml
     compileOnly("com.zaxxer:HikariCP:6.3.0")
     // The tests read YAML and parse MiniMessage, so they need the Paper API too (never packed in the plugin).
-    testImplementation("io.papermc.paper:paper-api:26.2.build.132-stable")
+    testImplementation("io.papermc.paper:paper-api:26.3.build.209-stable")
 
     testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")

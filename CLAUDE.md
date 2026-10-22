@@ -29,7 +29,7 @@ The user wants nlT-Structures and nlT-Races to look and work the same wherever t
 | Permissions | `nltraces.admin` / `nltraces.user`; `nltstructures.admin` (default false, not even ops) |
 | Messages | All chat text in `messages.yml` (MiniMessage), loaded by a `Messages` class with the same API in both plugins; gold `[nlT-...]` prefix; `messages-version` key triggers replacing an outdated file |
 | Config updates | A `ConfigUpdater` adds new settings and drops unused ones in the server's config at startup and on reload, keeping the admin's values; replaced files go to `backups/<name>-<yyyy-MM-dd_HH-mm-ss>.yml` via a `Backups` class. nlT-Races updates `config.yml`; nlT-Structures updates each structure's file (`monuments/monuments.yml`) and never touches a file that can't be read or has no valid location, and keeps "own" sections (`variants`) as the admin has them |
-| Build | Gradle 9.8.0 wrapper, Java 25, Paper API `26.2.build.132-stable`, `api-version` filled in from `minecraftVersion` in `build.gradle.kts`, run-paper 3.1.0 for test servers (`gradlew runServer`), JUnit 6 tests |
+| Build | Gradle 9.8.0 wrapper, Java 25, Paper API `26.3.build.209-stable` (moved up from 26.2 on 2026-10-22, so 26.3 is the minimum), `api-version` filled in from `minecraftVersion` in `build.gradle.kts`, run-paper 3.1.0 for test servers (`gradlew runServer`, one task, in `run/` for nlT-Races and `run/<minecraftVersion>` for nlT-Structures), JUnit 6 tests |
 | Docs | Admin manual in `docs/manual/` (`manual.md` -> `build-pdf.ps1` -> `docs/<name>-manual.pdf`). nlT-Structures also has a beginner code walkthrough in `docs/walkthrough/` |
 | `.gitignore` | Identical in both |
 
