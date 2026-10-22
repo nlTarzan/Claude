@@ -1,6 +1,7 @@
 package com.nltarzan.structures.monument;
 
 import com.nltarzan.structures.StructureModule;
+import com.nltarzan.structures.config.ConfigUpdater;
 import com.nltarzan.structures.config.Messages;
 import com.nltarzan.structures.info.CommandHelp;
 import com.nltarzan.structures.info.StatusLine;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,6 +110,7 @@ public final class Monuments implements StructureModule {
         if (!configFile.exists() && !oldConfig.exists()) {
             plugin.saveResource(folder.getName() + "/" + CONFIG_FILE, false);
         }
+        updateConfig();
         loadConfig();
         structures = new StructureLibrary(plugin);
         structures.load(settings.variants());
@@ -152,6 +155,7 @@ public final class Monuments implements StructureModule {
      * @return whether monuments.yml was fine
      */
     public boolean reloadSettings() {
+        updateConfig();
         boolean ok = loadConfig();
         if (ok) {
             structures.load(settings.variants());
@@ -305,6 +309,15 @@ public final class Monuments implements StructureModule {
     /** The clock time a number of seconds from now (an estimate: game time only runs while the server does). */
     private static String clockIn(long seconds) {
         return clock(LocalDateTime.now().plusSeconds(seconds));
+    }
+
+    /**
+     * Adds settings a newer version introduced to monuments.yml (and drops ones it no longer uses), keeping the
+     * admin's values and their own variants. A file that can't be read or has no valid location is left alone.
+     */
+    private void updateConfig() {
+        ConfigUpdater.update(plugin, folder.getName() + "/" + CONFIG_FILE, configFile, Set.of("variants"),
+                MonumentConfig::locationProblem);
     }
 
     /**

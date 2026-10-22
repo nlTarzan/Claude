@@ -4,7 +4,7 @@
 
 A **test** is a small piece of code that runs part of the plugin and checks the result: "if I give `parseTicks` the text `10s`, I must get 200 back". If the result is wrong, the test **fails** and tells you exactly what went wrong.
 
-- **No server needed.** The whole suite (46 tests) runs in about 4.5 seconds. Testing the same things in-game would take hours.
+- **No server needed.** The whole suite (49 tests) runs in about 4.5 seconds. Testing the same things in-game would take hours.
 - **Thousands of cases at once.** One test generates 3,000 monuments and checks every one of them.
 - **They guard what already works.** If a later change accidentally breaks something, like the sponge guarantee or the rotation math, a test fails straight away instead of a player finding it.
 
@@ -13,7 +13,7 @@ A **test** is a small piece of code that runs part of the plugin and checks the 
 ```
 src/test/java/com/nltarzan/structures/
 ├── util/          DurationsTest, WeightedTest
-├── config/        MessagesFileTest
+├── config/        ConfigUpdaterTest, MessagesFileTest
 ├── info/          InfoFilesTest
 └── monument/      MonumentArenaTest
     ├── build/     BuildPlannerTest
@@ -91,6 +91,7 @@ The same idea is used for the bell curve (`newestChanceFollowsTheBellCurve`), th
 | `DurationsTest` | 4 | `1d`, `10s`, `5t` and decimals are read correctly; bad times are refused; times print as `1h 4m 30s` |
 | `WeightedTest` | 4 | weighted picks follow the weights; weight 0 is never picked; negative weights are refused |
 | `MonumentConfigTest` | 4 | the default `monuments.yml` is valid; every way of breaking `location:` is caught; broken YAML is detected |
+| `ConfigUpdaterTest` | 3 | an older `monuments.yml` is updated with your location, mode and interval list kept, new settings added with their comments and old ones dropped; your own `variants` are kept exactly, and never count as added or removed settings |
 | `MessagesFileTest` | 1 | the default `messages.yml` is valid YAML, has its `messages-version` and prefix, and every text can be read as MiniMessage. nlT-Races has the same test for its own `messages.yml` |
 | `MonumentCommandTest` | 2 | `commands.txt` lists exactly the subcommands that exist, each with an explanation and correct examples |
 | `InfoFilesTest` | 2 | `status.txt` and `commands.txt` have the read-only header, aligned values, every command, and no line wider than 90 characters |

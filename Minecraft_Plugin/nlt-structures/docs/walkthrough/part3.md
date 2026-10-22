@@ -9,27 +9,65 @@ This works exactly like in nlT-Races, so both plugins' `messages.yml` files can 
 @code src/main/resources/messages.yml 1-20
 
 - **Lines 1–4:** how to write a message. The texts use **MiniMessage**, Adventure's tag format: `<red>…</red>` colors the text between the tags, `<bold>` makes it bold. Tags the plugin fills in, like `<command>` or `<seed>`, look the same. To show a real `<`, write `\<`.
-- **Line 8:** the file's version. When an update rewords existing messages, this number goes up; a server with an older copy then gets the new file, and its old one is kept as `messages-backup.yml`.
+- **Line 8:** the file's version. When an update rewords existing messages, this number goes up; a server with an older copy then gets the new file, and its old one is kept in the `backups` folder.
 - **Line 10:** the `[nlT-Structures]` prefix in front of every chat message, in gold like nlT-Races' `[nlT-Races]`, so players can tell the two plugins apart.
 - **Lines 12–20:** the messages of the root command. A key like `general.usage` means "`usage` inside `general`".
 
-@code src/main/java/com/nltarzan/structures/config/Messages.java 17-49
+@code src/main/java/com/nltarzan/structures/config/Messages.java 17-50
 
 - **Lines 24–27:** the file name, the version key and the MiniMessage reader, which turns tag text into chat components.
 - **Lines 32–35:** reads the file once when the plugin starts.
-- **Lines 37–49 (`reload`):** called at startup and by `/nltstructures reload`.
-  - **Lines 40–41:** no `messages.yml` yet: copy the default one out of the jar.
-  - **Lines 42–43:** an outdated copy (a lower `messages-version`): replace it, keeping a backup (lines 66–80).
-  - **Lines 45–48:** read the file, with the jar's copy as **defaults**. A key that's missing from the server's copy (for example a message added in a later version) then falls back to the default text instead of showing nothing.
+- **Lines 37–50 (`reload`):** called at startup and by `/nltstructures reload`.
+  - **Line 40:** older versions kept a single `messages-backup.yml` next to `messages.yml`. If one is still there, it moves into the `backups` folder (`Backups`, below).
+  - **Lines 41–42:** no `messages.yml` yet: copy the default one out of the jar.
+  - **Lines 43–44:** an outdated copy (a lower `messages-version`): replace it, keeping a backup (lines 67–77).
+  - **Lines 46–49:** read the file, with the jar's copy as **defaults**. A key that's missing from the server's copy (for example a message added in a later version) then falls back to the default text instead of showing nothing.
 
-@code src/main/java/com/nltarzan/structures/config/Messages.java 82-117
+@code src/main/java/com/nltarzan/structures/config/Messages.java 62-114
 
-- **Lines 87–101 (`get`):** turns a key into chat text.
-  - **Lines 88–91:** a key that isn't in the file at all shows `[missing message: …]` in red, which makes a typo easy to spot.
-  - **Lines 92–99:** the placeholders come in pairs, name and value: `get("monument.placed", "placed", "monument_03")` fills `<placed>` with `monument_03`. Text values are inserted as plain text, so a `<` in a world name can't be mistaken for a tag. A value that's already a `Component` keeps its own color; the status uses that (see `status` below).
-- **Lines 104–106 (`send`):** the prefix plus the message, to one player or the console.
-- **Lines 109–111 (`sendRaw`):** without the prefix, for list lines like the help entries and status lines.
-- **Lines 114–116 (`broadcast`):** with the prefix, to everyone who has a permission, and to the console. The reset announcements use it.
+- **Lines 63–65:** the server's copy is outdated when its `messages-version` is lower than the jar's.
+- **Lines 68–77:** move the old file into the `backups` folder, then copy the new one out of the jar and say where the old one went. If the backup fails, the old file is kept and nothing is replaced, so your texts are never lost.
+- **Lines 84–98 (`get`):** turns a key into chat text.
+  - **Lines 85–88:** a key that isn't in the file at all shows `[missing message: …]` in red, which makes a typo easy to spot.
+  - **Lines 89–96:** the placeholders come in pairs, name and value: `get("monument.placed", "placed", "monument_03")` fills `<placed>` with `monument_03`. Text values are inserted as plain text, so a `<` in a world name can't be mistaken for a tag. A value that's already a `Component` keeps its own color; the status uses that (see `status` below).
+- **Lines 101–103 (`send`):** the prefix plus the message, to one player or the console.
+- **Lines 106–108 (`sendRaw`):** without the prefix, for list lines like the help entries and status lines.
+- **Lines 111–113 (`broadcast`):** with the prefix, to everyone who has a permission, and to the console. The reset announcements use it.
+
+## Backups.java and ConfigUpdater.java: keeping the files up to date
+
+These two work exactly like their namesakes in nlT-Races. When an update changes `messages.yml` or `monuments.yml`, your old copy is kept, and your settings carry over.
+
+@code src/main/java/com/nltarzan/structures/config/Backups.java 14-61
+
+- **Lines 20–21:** the folder (`plugins/nlT-Structures/backups`) and the date-and-time format used in the names.
+- **Lines 27–29 (`move`):** moves a file into the folder, stamped with the current time.
+- **Lines 35–40 (`moveLegacy`):** moves a `messages-backup.yml` from an older version into the folder, stamped with the time that file was last changed, so its name says how old it really is.
+- **Lines 42–60:** does the moving.
+  - **Lines 43–46:** split the name into its base and extension, dropping `-backup`: `monuments.yml` gives `monuments` and `.yml`.
+  - **Lines 50–53:** the new name, like `monuments-2026-10-22_14-30-05.yml`. If that name is already taken (two backups in the same second), a number is added, so a backup is never overwritten.
+  - **Lines 54–55:** move it, and return where it went, for the log message.
+  - **Lines 56–59:** if moving fails, log a warning and return `null`. Every caller then leaves the original file alone.
+
+@code src/main/java/com/nltarzan/structures/config/ConfigUpdater.java 43-90
+
+`update` is called for `monuments.yml` at startup and by `/nltstructures monument reload` (`Monuments.updateConfig`, step 2).
+
+- **Lines 45–47:** no file yet: nothing to update. The default is copied out of the jar elsewhere.
+- **Lines 48–56, the safety rules:** read the file strictly (`load` throws on a YAML mistake, see `Monuments.loadConfig` in step 2), and check it for a problem such as a missing location. Either way, the file is **left alone**. This matters: a file that couldn't be read would look empty, so every setting would seem to be missing, and the updater would write the defaults, including the default location. The monument would then be built somewhere else. Instead, the monument pauses and says what's wrong, as it always did.
+- **Lines 57–60:** read the default file from the jar. This copy becomes the new file, so its comments and layout are the up-to-date ones.
+- **Lines 62–67:** list the settings the jar's copy has and yours doesn't (**added**), and the ones yours has and the jar's doesn't (**removed**, settings a newer version no longer uses). The own sections, like `variants`, are left out of both lists (lines 124–129); only a whole own section that's missing counts as added (lines 64–65).
+- **Lines 68–70:** nothing added or removed: the file is up to date and isn't touched, not even rewritten.
+- **Line 72:** copy your values into the jar's copy (`keepValues`, below).
+- **Lines 73–78:** move your file into the backups folder. If that fails, stop and keep your file; the missing settings then simply use their defaults.
+- **Lines 79–85:** write the merged file where yours was.
+- **Lines 86–89:** log what happened: which settings were added and removed, and where your previous copy is.
+
+@code src/main/java/com/nltarzan/structures/config/ConfigUpdater.java 92-129
+
+- **Lines 97–101:** for every setting in your file that still exists, put your value into the new file. A list, like `reset.intervals`, counts as one value, so it's kept whole.
+- **Lines 102–117, own sections:** the keys of `variants:` are names you choose, so the new file gets exactly yours: names only the jar has are removed (lines 109–113), and every name you have is set with your weight (lines 114–116). This is done key by key, instead of replacing the whole section, so the comment above `variants:` stays.
+- **Lines 124–129 (`settings`):** every setting as a full path such as `reset.mode` (sections that only group settings, like `reset`, don't count), leaving out everything inside the own sections.
 
 ## StructureCommand.java: the /nltstructures root
 

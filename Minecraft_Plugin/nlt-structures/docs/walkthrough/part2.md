@@ -71,17 +71,17 @@ An **interface** is a list of methods that a class promises to have. Every struc
 
 This class is the monument's own "mini plugin". It owns its config file, its saved data and all the parts that do the work. A mansion would later get a `Mansions` class like it.
 
-### Lines 35–75: the class and its fields
+### Lines 37–77: the class and its fields
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 35-75
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 37-77
 
-- **Lines 40–42:** the safety rule: a broken `monuments.yml` never leads to a monument being built somewhere else.
-- **Lines 44–45:** the same holds while the monument is switched off with `/nltstructures monument active off`, and a new server starts switched off. So whoever installs the plugin first checks the location, instead of getting a monument at the default one.
-- **Line 47:** `implements StructureModule`, so it promises the methods above.
-- **Line 49:** the config file's name as a constant.
-- **Lines 50–51:** two clock formats for the status: `14:03`, or with the date when it isn't today.
-- **Lines 54–55:** a small private record for the last check: when it happened and how it ended.
-- **Lines 57–63:**
+- **Lines 42–44:** the safety rule: a broken `monuments.yml` never leads to a monument being built somewhere else.
+- **Lines 46–47:** the same holds while the monument is switched off with `/nltstructures monument active off`, and a new server starts switched off. So whoever installs the plugin first checks the location, instead of getting a monument at the default one.
+- **Line 49:** `implements StructureModule`, so it promises the methods above.
+- **Line 51:** the config file's name as a constant.
+- **Lines 52–53:** two clock formats for the status: `14:03`, or with the date when it isn't today.
+- **Lines 56–57:** a small private record for the last check: when it happened and how it ended.
+- **Lines 59–65:**
   - `plugin`: the plugin, needed for Bukkit calls.
   - `messages`: the plugin's `messages.yml`. The command, the resetter and the hoe rules all send their texts through it.
   - `command`: the `/nltstructures monument` command, made once.
@@ -89,120 +89,125 @@ This class is the monument's own "mini plugin". It owns its config file, its sav
   - `configFile`: `plugins/nlT-Structures/monuments/monuments.yml`.
   - `folder`: `plugins/nlT-Structures/monuments/`, which holds everything of the monument: `monuments.yml`, `state.yml` and `current.yml`.
   - `config`: the file's contents as loaded, which can also be edited and saved.
-- **Lines 65–70:**
+- **Lines 67–72:**
   - `settings`: the config turned into ready-to-use values (`MonumentConfig`, below).
   - `configProblem`: what's wrong with `monuments.yml`, or `null` when it's fine.
   - `paused`: true when no valid `monuments.yml` was loaded since the server started.
   - `lastCheck`: the outcome of the last check.
-- **Lines 72–75:** the parts, each explained in step 4:
+- **Lines 74–77:** the parts, each explained in step 4:
   - **`structures`:** all `.nbt` templates, loaded into memory.
   - **`resetter`:** does one check, and places a new monument when it's cleared.
   - **`scheduler`:** the timer that decides *when* checks happen.
   - **`currentMonument`:** remembers what's built right now, its sponge count and its ID.
 
-### Lines 77–146: constructor, name, start and stop
+### Lines 79–149: constructor, name, start and stop
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 77-146
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 79-149
 
-- **Lines 80–87:** the **constructor**, which runs once when `new Monuments(...)` is called. It stores the plugin, the messages and the callback (`this.plugin` is the field; `plugin` alone is the parameter), makes the command (line 83, after the messages, because the command takes them from here), and works out the two paths: first the `monuments/` folder, then the config file inside it. A `File` is only a path; nothing is created yet.
-- **Lines 89–97:** the name and command word from `StructureModule`.
-- **Lines 100–129, `enable()`:**
-  - **Line 101:** create the `monuments/` folder if it doesn't exist.
-  - **Lines 102–105:** older versions kept `monuments.yml` directly in `plugins/nlT-Structures/`. If it's still there, move it into `monuments/` (`moveOldConfig`, below).
-  - **Lines 106–110:** if there's no `monuments.yml` at all, copy the default one out of the jar: `monuments/monuments.yml` inside the jar ends up as `monuments/monuments.yml` in the plugin's folder. Not when an old one couldn't be moved, though: the monument is then paused for lack of a config, which is safer than a fresh default with a location that may be wrong.
-  - **Line 111:** read `monuments.yml` strictly (see `loadConfig` below).
-  - **Lines 112–113:** load all structure templates, including the configured pre-built variants.
-  - **Line 114:** load `current.yml`.
-  - **Lines 115–116:** create the resetter and the timer. They get `this` (the `Monuments` object), so they can reach the settings, the structures and so on.
-  - **Lines 117–118:** start the timer, but **not** when paused. The timer itself also does nothing while the monument is inactive (step 4).
-  - **Lines 119–123:** inactive (always the case on a new server)? Then log a warning on every startup, explaining how to check the location and turn the monument on.
-  - **Line 126:** create the hoe helper, which knows how to make and recognize a Monument Hoe.
-  - **Lines 127–128:** register the two **listeners**, classes whose methods Paper calls when something happens in the game (step 7). Both get the same `hoe` object.
-- **Lines 132–136:** stop the timer when the plugin shuts down, so no check fires in the middle of shutting down.
-- **Lines 139–141:** hands out the `/nltstructures monument` command made in the constructor. It's the same object every time, because the root command asks for it on every use.
-- **Lines 144–146:** the command help for `commands.txt`, which lives in `MonumentCommand`.
+- **Lines 82–89:** the **constructor**, which runs once when `new Monuments(...)` is called. It stores the plugin, the messages and the callback (`this.plugin` is the field; `plugin` alone is the parameter), makes the command (line 85, after the messages, because the command takes them from here), and works out the two paths: first the `monuments/` folder, then the config file inside it. A `File` is only a path; nothing is created yet.
+- **Lines 91–99:** the name and command word from `StructureModule`.
+- **Lines 102–132, `enable()`:**
+  - **Line 103:** create the `monuments/` folder if it doesn't exist.
+  - **Lines 104–107:** older versions kept `monuments.yml` directly in `plugins/nlT-Structures/`. If it's still there, move it into `monuments/` (`moveOldConfig`, below).
+  - **Lines 108–112:** if there's no `monuments.yml` at all, copy the default one out of the jar: `monuments/monuments.yml` inside the jar ends up as `monuments/monuments.yml` in the plugin's folder. Not when an old one couldn't be moved, though: the monument is then paused for lack of a config, which is safer than a fresh default with a location that may be wrong.
+  - **Line 113:** bring `monuments.yml` up to date: add settings a newer version of the plugin introduced and drop ones it no longer uses, keeping the admin's values (`updateConfig`, below, and `ConfigUpdater` in step 3).
+  - **Line 114:** read `monuments.yml` strictly (see `loadConfig` below).
+  - **Lines 115–116:** load all structure templates, including the configured pre-built variants.
+  - **Line 117:** load `current.yml`.
+  - **Lines 118–119:** create the resetter and the timer. They get `this` (the `Monuments` object), so they can reach the settings, the structures and so on.
+  - **Lines 120–121:** start the timer, but **not** when paused. The timer itself also does nothing while the monument is inactive (step 4).
+  - **Lines 122–126:** inactive (always the case on a new server)? Then log a warning on every startup, explaining how to check the location and turn the monument on.
+  - **Line 129:** create the hoe helper, which knows how to make and recognize a Monument Hoe.
+  - **Lines 130–131:** register the two **listeners**, classes whose methods Paper calls when something happens in the game (step 7). Both get the same `hoe` object.
+- **Lines 135–139:** stop the timer when the plugin shuts down, so no check fires in the middle of shutting down.
+- **Lines 142–144:** hands out the `/nltstructures monument` command made in the constructor. It's the same object every time, because the root command asks for it on every use.
+- **Lines 147–149:** the command help for `commands.txt`, which lives in `MonumentCommand`.
 
-### Lines 148–216: reload, broadcast, setcenter, active, last check
+### Lines 151–220: reload, broadcast, setcenter, active, last check
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 154-216
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 157-220
 
-- **Lines 154–162, `/nltstructures monument reload`:** re-read the file. Only if it's fine, reload the templates (in case the variants changed) and restart the timer; the timer keeps the saved countdown, so a reload doesn't reset the wait. Then update `status.txt`, and return whether it worked.
-- **Lines 169–178, `/nltstructures monument broadcast`:**
-  - **Lines 170–172:** refuse while `monuments.yml` has a problem. Saving would overwrite the file you're fixing.
-  - **Lines 173–177:** change `reset.announce`, save the file, rebuild the settings so it takes effect immediately, and update the status.
-- **Lines 185–196, `/nltstructures monument setcenter`:** the same safety check, then write the new position into the `location:` section, save, and reload so the timer and checks use the new spot.
-- **Lines 203–210, `/nltstructures monument active on|off`:**
-  - **Lines 204–206:** turning **on** is refused while `monuments.yml` has a problem, because the location isn't known then. Turning off always works.
-  - **Line 207:** the timer does the actual work and saves the choice in `state.yml` (step 4).
-  - **Line 208:** update `status.txt`.
-- **Lines 213–216:** called by the timer after every check: remember the time and outcome for the status, and update `status.txt`.
+- **Lines 157–166, `/nltstructures monument reload`:** bring the file up to date first (line 158, just like at startup), then re-read it. Only if it's fine, reload the templates (in case the variants changed) and restart the timer; the timer keeps the saved countdown, so a reload doesn't reset the wait. Then update `status.txt`, and return whether it worked.
+- **Lines 173–182, `/nltstructures monument broadcast`:**
+  - **Lines 174–176:** refuse while `monuments.yml` has a problem. Saving would overwrite the file you're fixing.
+  - **Lines 177–181:** change `reset.announce`, save the file, rebuild the settings so it takes effect immediately, and update the status.
+- **Lines 189–200, `/nltstructures monument setcenter`:** the same safety check, then write the new position into the `location:` section, save, and reload so the timer and checks use the new spot.
+- **Lines 207–214, `/nltstructures monument active on|off`:**
+  - **Lines 208–210:** turning **on** is refused while `monuments.yml` has a problem, because the location isn't known then. Turning off always works.
+  - **Line 211:** the timer does the actual work and saves the choice in `state.yml` (step 4).
+  - **Line 212:** update `status.txt`.
+- **Lines 217–220:** called by the timer after every check: remember the time and outcome for the status, and update `status.txt`.
 
-### Lines 218–229: the monument area
+### Lines 222–233: the monument area
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 218-229
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 222-233
 
-- **Lines 220–222:** no area while the monument isn't active (`isActive()`, at the end of the file): when paused there's no known location, and when switched off the default location may well be someone's build. Because the hoe rules and the Elder Guardian reward both ask for the area, they're off too.
-- **Line 223:** look up the world by name.
-- **Lines 224–226:** if that world isn't loaded (or the name is wrong), return `null`. Every caller checks for that.
-- **Lines 227–228:** otherwise create a `MonumentArena`: the center, the radius and the 58×22×58 box, with helpers like "which entities are at the monument" and "count the sponges" (step 4). A new one each time is cheap, and it means a changed center takes effect immediately.
+- **Lines 224–226:** no area while the monument isn't active (`isActive()`, at the end of the file): when paused there's no known location, and when switched off the default location may well be someone's build. Because the hoe rules and the Elder Guardian reward both ask for the area, they're off too.
+- **Line 227:** look up the world by name.
+- **Lines 228–230:** if that world isn't loaded (or the name is wrong), return `null`. Every caller checks for that.
+- **Lines 231–232:** otherwise create a `MonumentArena`: the center, the radius and the 58×22×58 box, with helpers like "which entities are at the monument" and "count the sponges" (step 4). A new one each time is cheap, and it means a changed center takes effect immediately.
 
-### Lines 231–308: the status
+### Lines 235–312: the status
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 231-284
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 235-288
 
 This builds the list of status lines used by both `/nltstructures monument status` (in color) and `status.txt` (plain text). Each `StatusLine` has a label, a value and a color.
 
-- **Lines 234–238:** a red **Problem** line first, when `monuments.yml` has a mistake.
-- **Lines 239–241:** the location, or "Unknown" while paused.
-- **Lines 242–247:** what's built: "Pre-built monument_03", "Generated, seed 123", or "Not placed by the plugin yet". `get()` returns an `Optional` (a box that may be empty); `.map(...)` turns its content into a line, `.orElse(...)` is used when it's empty.
-- **Lines 248–249:** the sponge count, only when known.
-- **Lines 251–256:** the number of Elder Guardians alive, red when above 0 and green at 0. Only shown when the area is loaded, because the count isn't reliable otherwise. `>> 4` turns a block coordinate into a chunk coordinate (divide by 16).
-- **Lines 257–259:** the last check (below).
-- **Lines 261–264:** the reset mode, with a red note when the generated templates didn't load. `a ? b : c` means "if a then b, otherwise c".
-- **Lines 267–270:** **Active**: "On" in green, or "Off" in gold with what to do about it.
-- **Lines 271–279:** the next check: "Paused", "Not scheduled", or "in 1h 4m 30s (around 15:08)". While the monument is switched off there's no next check, so this line is left out (the Active line already explains why).
-- **Lines 280–282:** broadcasts on (green) or off (red).
+- **Lines 238–242:** a red **Problem** line first, when `monuments.yml` has a mistake.
+- **Lines 243–245:** the location, or "Unknown" while paused.
+- **Lines 246–251:** what's built: "Pre-built monument_03", "Generated, seed 123", or "Not placed by the plugin yet". `get()` returns an `Optional` (a box that may be empty); `.map(...)` turns its content into a line, `.orElse(...)` is used when it's empty.
+- **Lines 252–253:** the sponge count, only when known.
+- **Lines 255–260:** the number of Elder Guardians alive, red when above 0 and green at 0. Only shown when the area is loaded, because the count isn't reliable otherwise. `>> 4` turns a block coordinate into a chunk coordinate (divide by 16).
+- **Lines 261–263:** the last check (below).
+- **Lines 265–268:** the reset mode, with a red note when the generated templates didn't load. `a ? b : c` means "if a then b, otherwise c".
+- **Lines 271–274:** **Active**: "On" in green, or "Off" in gold with what to do about it.
+- **Lines 275–283:** the next check: "Paused", "Not scheduled", or "in 1h 4m 30s (around 15:08)". While the monument is switched off there's no next check, so this line is left out (the Active line already explains why).
+- **Lines 284–286:** broadcasts on (green) or off (red).
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 286-308
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 290-312
 
-- **Lines 286–298:** the last check's line, by outcome: not cleared (red), cleared but players inside (yellow), reset (green) or failed (red). The `switch` with `case Result.NotCleared(int alive)` takes the number out of the result directly; this is called a **record pattern**.
-- **Lines 301–303:** a time as `14:03`, or with the date when it isn't today.
-- **Lines 306–308:** the clock time some seconds from now. It's an estimate, because game time only runs while the server does.
+- **Lines 290–302:** the last check's line, by outcome: not cleared (red), cleared but players inside (yellow), reset (green) or failed (red). The `switch` with `case Result.NotCleared(int alive)` takes the number out of the result directly; this is called a **record pattern**.
+- **Lines 305–307:** a time as `14:03`, or with the date when it isn't today.
+- **Lines 310–312:** the clock time some seconds from now. It's an estimate, because game time only runs while the server does.
 
-### Lines 310–385: reading, moving and saving monuments.yml safely
+### Lines 314–398: updating, reading, moving and saving monuments.yml safely
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 315-352
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 314-321
 
-- **Lines 316–325:** read the file strictly. `yaml.load` throws an error on a YAML mistake (for example a missing space after a colon), instead of quietly returning an empty file. If it reads fine, check the `location:` section (`MonumentConfig.locationProblem`, below). `try`/`catch` catches the error and turns it into a problem description; `details` keeps the full error text for the console.
-- **Lines 327–333:** no problem: use it, clear any old problem and un-pause.
-- **Lines 335–351:** a problem:
-  - **Lines 336–343, at startup** (no earlier settings): use the defaults for everything except the location, **pause** the monument, and log a clear error.
-  - **Lines 344–347, on a reload:** keep the previous working settings, and log the error.
-  - **Lines 348–350:** log the full error details too.
+- **Lines 318–321:** hands `monuments.yml` to `ConfigUpdater` (step 3), which adds the settings a newer version of the plugin introduced and drops the ones it no longer uses, keeping your values. It's told three things: where the file is, that `variants` is your own section (you choose its names, so it's kept exactly as you have it), and how to recognise a file with a problem (`MonumentConfig::locationProblem`, a **method reference** like `infoFiles::writeStatus` earlier). A file that can't be read or has no valid location is never touched; `loadConfig` then reports it and pauses, as before.
+
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 328-365
+
+- **Lines 329–338:** read the file strictly. `yaml.load` throws an error on a YAML mistake (for example a missing space after a colon), instead of quietly returning an empty file. If it reads fine, check the `location:` section (`MonumentConfig.locationProblem`, below). `try`/`catch` catches the error and turns it into a problem description; `details` keeps the full error text for the console.
+- **Lines 340–346:** no problem: use it, clear any old problem and un-pause.
+- **Lines 348–364:** a problem:
+  - **Lines 349–356, at startup** (no earlier settings): use the defaults for everything except the location, **pause** the monument, and log a clear error.
+  - **Lines 357–360, on a reload:** keep the previous working settings, and log the error.
+  - **Lines 361–363:** log the full error details too.
 
 Without this, a broken file would make every coordinate 0, and the next check would build a monument at 0, 0, 0.
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 354-369
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 367-382
 
 - **Moving an old `monuments.yml` into `monuments/`**, for servers that ran an older version of the plugin.
-- **Lines 356–361:** there's already one in `monuments/`? Then that one wins, and a warning says the old one can be deleted.
-- **Lines 362–364:** otherwise move the file and log it. Your settings stay exactly as they were.
-- **Lines 365–368:** if moving fails (for example because another program has the file open), log an error saying to move it by hand. The monument then stays paused until that's done and `reload` is run.
+- **Lines 369–374:** there's already one in `monuments/`? Then that one wins, and a warning says the old one can be deleted.
+- **Lines 375–377:** otherwise move the file and log it. Your settings stay exactly as they were.
+- **Lines 378–381:** if moving fails (for example because another program has the file open), log an error saying to move it by hand. The monument then stays paused until that's done and `reload` is run.
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 371-385
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 384-398
 
-- **Lines 371–377:** the first line of an error message, shortened to 120 characters, for the status.
-- **Lines 379–385:** write the YAML back to disk. Paper keeps the comments when it does this. If saving fails, a warning is logged instead of crashing.
+- **Lines 384–390:** the first line of an error message, shortened to 120 characters, for the status.
+- **Lines 392–398:** write the YAML back to disk. Paper keeps the comments when it does this. If saving fails, a warning is logged instead of crashing.
 
-### Lines 387–438: getters
+### Lines 400–451: getters
 
 The rest of the file are **getters**, small methods that hand out a field so the other parts can reach it: `configProblem()`, `isPaused()`, `isActive()`, `plugin()`, `folder()`, `getLogger()`, `getServer()`, `isEnabled()`, `settings()`, `structures()`, `resetter()`, `scheduler()` and `currentMonument()`. `getLogger()`, `getServer()` and `isEnabled()` pass straight through to the plugin, so the other monument classes can write `monuments.getLogger()` without knowing about the plugin.
 
 One of them is more than a getter:
 
-@code src/main/java/com/nltarzan/structures/monument/Monuments.java 397-400
+@code src/main/java/com/nltarzan/structures/monument/Monuments.java 410-413
 
-- **Line 399:** the monument only does anything (checks, resets, hoe rules, the reward) when `monuments.yml` is fine **and** it's switched on. Everything else asks this one method, so the rule lives in a single place.
+- **Line 412:** the monument only does anything (checks, resets, hoe rules, the reward) when `monuments.yml` is fine **and** it's switched on. Everything else asks this one method, so the rule lives in a single place.
 
 ## MonumentConfig.java: reading monuments.yml
 

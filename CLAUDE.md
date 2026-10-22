@@ -28,6 +28,7 @@ The user wants nlT-Structures and nlT-Races to look and work the same wherever t
 | Commands | `/nltraces` (aliases `/races`, `/nltr`), `/nltstructures` (aliases `/structures`, `/nlts`). No arguments or `help` shows the help list; `reload` reloads |
 | Permissions | `nltraces.admin` / `nltraces.user`; `nltstructures.admin` (default false, not even ops) |
 | Messages | All chat text in `messages.yml` (MiniMessage), loaded by a `Messages` class with the same API in both plugins; gold `[nlT-...]` prefix; `messages-version` key triggers replacing an outdated file |
+| Config updates | A `ConfigUpdater` adds new settings and drops unused ones in the server's config at startup and on reload, keeping the admin's values; replaced files go to `backups/<name>-<yyyy-MM-dd_HH-mm-ss>.yml` via a `Backups` class. nlT-Races updates `config.yml`; nlT-Structures updates each structure's file (`monuments/monuments.yml`) and never touches a file that can't be read or has no valid location, and keeps "own" sections (`variants`) as the admin has them |
 | Build | Gradle 9.8.0 wrapper, Java 25, Paper API `26.2.build.132-stable`, `api-version` filled in from `minecraftVersion` in `build.gradle.kts`, run-paper 3.1.0 for test servers (`gradlew runServer`), JUnit 6 tests |
 | Docs | Admin manual in `docs/manual/` (`manual.md` -> `build-pdf.ps1` -> `docs/<name>-manual.pdf`). nlT-Structures also has a beginner code walkthrough in `docs/walkthrough/` |
 | `.gitignore` | Identical in both |
@@ -55,4 +56,4 @@ Things that are deliberately the same: status/info lines are built in code with 
 
 ## Open items
 
-- nlT-Races got a `backups/` folder (`Backups`) and a `ConfigUpdater` that updates `config.yml` in place; nlT-Structures still keeps a single `messages-backup.yml` and never updates `monuments.yml`. Bringing nlT-Structures in line would match the consistency rule above; ask the user first.
+- nlT-Races' `ConfigUpdater` reads `config.yml` with `YamlConfiguration.loadConfiguration`, which returns an empty config for a file with a YAML mistake. It then treats every setting as missing and replaces the admin's file with the defaults (database settings included; the old file does go to `backups/`). nlT-Structures avoids this by loading strictly and skipping a file that doesn't load. Not fixed in nlT-Races yet; ask the user.

@@ -37,6 +37,7 @@ public final class Messages {
     public void reload() {
         File file = new File(plugin.getDataFolder(), FILE_NAME);
         YamlConfiguration defaults = loadDefaults();
+        Backups.moveLegacy(plugin, "messages-backup.yml"); // where versions before the backups folder kept it
         if (!file.exists()) {
             plugin.saveResource(FILE_NAME, false);
         } else if (defaults != null && isOutdated(file, defaults)) {
@@ -63,20 +64,16 @@ public final class Messages {
         return YamlConfiguration.loadConfiguration(file).getInt(VERSION_KEY, 0) < defaults.getInt(VERSION_KEY, 0);
     }
 
-    /** Keeps the admin's old file as messages-backup.yml and writes the new one. */
+    /** Moves the admin's old file to the backups folder and writes the new one. */
     private void replaceOutdated(File file) {
-        File backup = new File(plugin.getDataFolder(), "messages-backup.yml");
-        if (backup.exists() && !backup.delete()) {
-            plugin.getLogger().warning("Could not replace " + backup.getName() + "; keeping the old messages.yml.");
-            return;
-        }
-        if (!file.renameTo(backup)) {
+        String backup = Backups.move(plugin, file);
+        if (backup == null) {
             plugin.getLogger().warning("Could not back up messages.yml; keeping the old one.");
             return;
         }
         plugin.saveResource(FILE_NAME, false);
         plugin.getLogger().warning("messages.yml was out of date and has been replaced. Your previous copy is "
-                + "saved as messages-backup.yml; copy any custom texts back from there.");
+                + "saved as " + backup + "; copy any custom texts back from there.");
     }
 
     /**

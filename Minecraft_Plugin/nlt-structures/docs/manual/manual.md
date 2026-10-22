@@ -21,7 +21,7 @@
 2. Delete the old nlT-Structures jar from `plugins` and put the new one there.
 3. Start the server.
 
-Your settings, the monument's saved state and the countdown to the next check are kept; see section 10 (Files). Always stop and start the server; don't use `/reload` or a plugin manager to swap the jar.
+`monuments.yml` and `messages.yml` update themselves, keeping your settings, and the monument's saved state and the countdown to the next check are kept; see section 10 (Files). Always stop and start the server; don't use `/reload` or a plugin manager to swap the jar.
 
 
 # 2. Permissions
@@ -458,18 +458,20 @@ Everything is in `plugins/nlT-Structures/`.
 | `monuments/monuments.yml` | The monument's settings; see section 8 (All settings) |
 | `monuments/state.yml` | Whether the monument is active, and when the next check is |
 | `monuments/current.yml` | What's built now: the variant or seed, the sponge count and the monument's ID |
+| `backups/` | Older copies of `monuments.yml` and `messages.yml` |
 
 **Which files you can edit**
 
 - `monuments.yml`: yes. Run `/nlts monument reload` afterwards.
-- `messages.yml`: yes. Run `/nlts reload` afterwards. All messages start with the `[nlT-Structures]` prefix, which is the first setting in the file.
+- `messages.yml`: yes. Run `/nlts reload` afterwards. All messages start with the `[nlT-Structures]` prefix, set near the top of the file.
 - `status.txt` and `commands.txt`: no. They're read-only and the plugin overwrites them.
 - `state.yml` and `current.yml`: leave these alone. Use the commands instead.
 
 **What happens to the files when you update the plugin**
 
-- **`monuments.yml`** is never changed by an update. A setting added by a newer version uses its default value until you add it to your file yourself.
-- **`messages.yml`:** when an update changes the wording of messages, your file is replaced with the new one and the old one is kept as `messages-backup.yml`. If you had changed messages yourself, copy them back from there. Messages that are only *added* by an update work without the file being replaced.
+- **`monuments.yml`:** new settings are added with their default values, settings that are no longer used are removed, and your own values are kept. Your `variants` list is kept exactly as you have it. This also happens on `/nlts monument reload`. A file with a mistake, or without a valid location, is never changed: the monument pauses and says what's wrong, as described in section 3 (How it works).
+- **`messages.yml`:** when an update changes the wording of messages, your file is replaced with the new one. If you had changed messages yourself, copy them back from the backup. Messages that are only *added* by an update work without the file being replaced.
+- **Backups:** before either file is changed, the old one is moved to `backups/` with the date and time in its name, such as `monuments-2026-10-22_14-30-05.yml`. A `messages-backup.yml` left by an older version is moved there too.
 - **`state.yml` and `current.yml`** are never touched by an update, so the monument, its countdown and existing Monument Hoes carry on as before.
 
 The status lines of `/nlts monument status` and the name of the Monument Hoe are not in `messages.yml`; they can't be changed.
