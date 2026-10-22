@@ -1,8 +1,8 @@
-.gradle/
-build/
-.idea/
+/.gradle/
+/build/
+/.idea/
 *.iml
-out/
-.kotlin/
+/out/
+/.kotlin/
 # Local test servers
-run/
+/run/
