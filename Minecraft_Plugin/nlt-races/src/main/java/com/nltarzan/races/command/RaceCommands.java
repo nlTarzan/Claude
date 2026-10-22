@@ -376,7 +376,12 @@ final class RaceCommands extends CommandGroup {
             return;
         }
         plugin.getSetupService().cancelAll(); // the race objects are about to be replaced
-        plugin.reload();
-        msg().send(sender, "general.reloaded", "count", String.valueOf(races().all().size()));
+        String configProblem = plugin.reload();
+        String count = String.valueOf(races().all().size());
+        if (configProblem == null) {
+            msg().send(sender, "general.reloaded", "count", count);
+        } else {
+            msg().send(sender, "general.reload-failed", "problem", configProblem, "count", count);
+        }
     }
 }

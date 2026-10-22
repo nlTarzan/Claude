@@ -458,7 +458,7 @@ After editing `config.yml`, `messages.yml` or a race file, run `/races reload`. 
 
 **What happens to the files when you update the plugin**
 
-- **`config.yml`:** new settings are added with their default values, and your own values are kept.
+- **`config.yml`:** new settings are added with their default values, and your own values are kept. A `config.yml` with a mistake in it (such as wrong indentation) is never changed; see section 12 (Troubleshooting).
 - **`messages.yml`:** when an update changes the wording of messages, your file is replaced with the new one. If you had changed messages yourself, copy them back from the backup.
 - **Backups:** before either file is changed, the old one is moved to `backups/` with the date and time in its name, such as `config-2026-10-10_14-30-05.yml`.
 - **Race files and times** are never touched by an update.
@@ -481,4 +481,6 @@ In `messages.yml`, `<race>` is a race's display name and `<race-id>` is its ID.
 | A placeholder shows its own text, like `%nltraces_...%` | PlaceholderAPI isn't installed, the race ID is misspelled, or the placeholder is mistyped. Test it with `/papi parse me <placeholder>` |
 | A placeholder shows `---` | There's no result for that position yet |
 | The cycle title shows `day`, `week` or `month` | The `placeholders.cycle.titles` section is missing from `config.yml`. Run `/races reload` to have it added |
+| nlT-Races doesn't start, and the console says `config.yml can't be read` | `config.yml` has a mistake, usually wrong indentation or a missing quote. The console shows the line. Fix it and restart. The plugin doesn't start on default settings, because those could, for example, save times to a new SQLite file instead of your MySQL database |
+| `/races reload` says `config.yml can't be read` | Same cause. Until it's fixed, the previous settings stay in use; `messages.yml` and the race files were still reloaded |
 | A change to a race is refused | The race is in use. Wait, or cancel it with `/races cancel <race>` |

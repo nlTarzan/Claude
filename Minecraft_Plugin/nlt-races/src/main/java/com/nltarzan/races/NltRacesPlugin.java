@@ -32,7 +32,14 @@ public final class NltRacesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        ConfigUpdater.update(this);
+        String configProblem = ConfigUpdater.update(this);
+        if (configProblem != null) {
+            // Running on the defaults instead could, for example, save times to a new SQLite file
+            // instead of the admin's MySQL database.
+            getLogger().severe("config.yml " + configProblem + ". Fix it and restart the server. Disabling nlT-Races.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         reloadConfig();
         messages = new Messages(this);
 
@@ -91,13 +98,23 @@ public final class NltRacesPlugin extends JavaPlugin {
         }
     }
 
-    /** Re-reads config.yml, messages.yml and the race files. Database settings need a restart. */
-    public void reload() {
-        ConfigUpdater.update(this);
-        reloadConfig();
+    /**
+     * Re-reads config.yml, messages.yml and the race files. Database settings need a restart.
+     *
+     * @return null, or what's wrong with config.yml; its previous settings then stay in use
+     */
+    public String reload() {
+        String configProblem = ConfigUpdater.update(this);
+        if (configProblem == null) {
+            reloadConfig();
+        } else {
+            getLogger().severe("config.yml " + configProblem + ". Still using the previous settings; fix it and "
+                    + "run /nltraces reload again.");
+        }
         messages.reload();
         races.load();
         leaderboards.refreshAll();
+        return configProblem;
     }
 
     /** Runs a task on the main server thread, if the plugin is still enabled. */

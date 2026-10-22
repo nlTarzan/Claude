@@ -56,4 +56,9 @@ Things that are deliberately the same: status/info lines are built in code with 
 
 ## Open items
 
-- nlT-Races' `ConfigUpdater` reads `config.yml` with `YamlConfiguration.loadConfiguration`, which returns an empty config for a file with a YAML mistake. It then treats every setting as missing and replaces the admin's file with the defaults (database settings included; the old file does go to `backups/`). nlT-Structures avoids this by loading strictly and skipping a file that doesn't load. Not fixed in nlT-Races yet; ask the user.
+- None right now.
+
+## Fixed, worth knowing
+
+- 2026-10-22: nlT-Races' `ConfigUpdater` now loads `config.yml` strictly. A file with a YAML mistake is left alone: the plugin disables itself on startup, and `/nltraces reload` keeps the previous settings. Before, a loose load made it look empty and the file was replaced with the defaults.
+- Running the unit tests with plain `javac`/`java` (when Gradle can't run): this PC's Gradle cache holds old Bukkit/Spigot jars and other jars with their own `config.yml`. Leave `org.bukkit`/`org.spigotmc` jars off the classpath and put the compiled classes and resources first, or tests fail for reasons unrelated to the code. Java 25 is in `~/.gradle/jdks/` on the `dunky` PC (no Temurin install there, so set `JAVA_HOME` to it before `build-pdf.ps1`). That PC has no Edge in `Program Files (x86)`, so the PDFs can't be rebuilt there: rebuild them on the other PC.

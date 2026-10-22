@@ -19,6 +19,7 @@ general:
   invalid-number: '<red><yellow><value></yellow> is not a valid number.</red>'
   not-used: '<gray>Note: <race> is a <format> race, so this isn''t used unless you change its format or travel mode.</gray>'
   reloaded: '<green>Reloaded config, messages and <count> race(s). Database settings need a server restart.</green>'
+  reload-failed: '<red>config.yml <problem>. Still using the previous settings; messages and <count> race(s) were reloaded. Details are in the console.</red>'
   click-to-run: '<gray>Click to run</gray> <white><command></white>'
   race-active: '<red><race> is being raced right now. Wait until it''s finished before changing it.</red>'
   reload-while-racing: '<red>A race is running. Wait until all races have finished before reloading.</red>'
