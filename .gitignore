@@ -1,5 +1,5 @@
 # Applies to every project in this repository. Each project can add its own .gitignore
-# (e.g. Minecraft_Plugin/resetting-structures/.gitignore for build output and test servers).
+# (e.g. Minecraft_Plugin/nlt-structures/.gitignore for build output and test servers).
 
 # Editors
 .idea/
