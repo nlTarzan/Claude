@@ -58,9 +58,13 @@ tasks.jar {
 }
 
 // ./gradlew runServer -> builds the plugin and starts the local test server in run/ with it.
-// LuckPerms and PlaceholderAPI are already in run/plugins; the plugin jar itself is added by
-// run-paper, so don't copy it into run/plugins as well.
+// run-paper adds the plugin jar and downloads LuckPerms (for nltraces.user / nltraces.admin) and
+// PlaceholderAPI (for the leaderboard placeholders), so don't copy any of them into run/plugins.
 tasks.runServer {
     minecraftVersion(minecraftVersion)
     runDirectory = layout.projectDirectory.dir("run")
+    downloadPlugins {
+        modrinth("luckperms", "v5.5.71-bukkit")
+        hangar("PlaceholderAPI", "2.12.3")
+    }
 }
